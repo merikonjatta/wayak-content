@@ -1,0 +1,44 @@
+==[http://www.kroah.com/lkn/ Linux Kernel in a Nutshell]==
+[[File:Linux_kernel_in_a_nutshell_small.jpg|thumb]]
+
+{|
+|-
+|著者
+|Greg Kroah-Hartman
+|-
+|出版社
+|O'Reilly
+|-
+|出版年
+|2006
+|}
+
+==ライセンス==
+{|
+|-
+|原文ライセンス
+|[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
+|-
+|翻訳文ライセンス
+|[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
+|}
+
+==目次==
+* [[LKN-Preface|まえがき]]
+* Part I: カーネルをビルドする
+** [[LKN-Chapter1|第1章: はじめに]]
+** [[LKN-Chapter2|第2章: 必要事項]]
+** [[LKN-Chapter3|第3章: カーネルソースを入手する]]
+** [[LKN-Chapter4|第4章: コンフィギュアしてビルドする]]
+** [[LKN-Chapter5|第5章: インストールしてブートする]]
+** [[LKN-Chapter6|第6章: アップグレードする]]
+* Part II: カスタマイズ
+** [[LKN-Chapter7|第7章: カーネルのカスタマイズ]]
+** [[LKN-Chapter8|第8章: 設定レシピ集]]
+* Part III: リファレンス
+** [[LKN-Chapter9|第9章: ブート時のコマンドラインリファレンス]]
+** [[LKN-Chapter10|第10章: ビルド時のコマンドラインリファレンス]]
+** [[LKN-Chapter11|第11章: オプションリファレンス]]
+* Part IV: 付録
+** [[LKN-AppendixA|付録A: ユーティリティ]]
+** [[LKN-AppendixB|付録B: 参考文献]]
