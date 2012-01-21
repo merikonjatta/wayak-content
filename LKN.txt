@@ -27,9 +27,9 @@
 |}
 
 ==目次==
-* [[LKN-Preface|まえがき]]
+* [[LKN/Preface|まえがき]]
 * Part I: カーネルをビルドする
-** [[LKN-Chapter1|第1章: はじめに]]
+** [[LKN/Chapter1|第1章: はじめに]]
 ** [[LKN-Chapter2|第2章: 必要事項]]
 ** [[LKN-Chapter3|第3章: カーネルソースを入手する]]
 ** [[LKN-Chapter4|第4章: コンフィギュアしてビルドする]]
