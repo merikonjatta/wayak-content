@@ -1,7 +1,7 @@
-==[http://www.kroah.com/lkn/ Linux Kernel in a Nutshell]==
+==Linux Kernel in a Nutshell==
 [[File:Linux_kernel_in_a_nutshell_small.jpg|thumb]]
 
-{|
+{|class="default"
 |-
 |著者
 |Greg Kroah-Hartman
@@ -11,10 +11,13 @@
 |-
 |出版年
 |2006
+|-
+|Webサイト
+|http://www.kroah.com/lkn/
 |}
 
 ==ライセンス==
-{|
+{|class="default"
 |-
 |原文ライセンス
 |[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
@@ -42,3 +45,4 @@
 * Part IV: 付録
 ** [[LKN-AppendixA|付録A: ユーティリティ]]
 ** [[LKN-AppendixB|付録B: 参考文献]]
+
