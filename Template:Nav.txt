@@ -5,5 +5,11 @@
  | class="prev" | {{ Link | {{{prev|}}} | prepend=← }}
  | class="here" | {{#show: {{FULLPAGENAME}} | ?title#}}
  | class="next" | {{ Link | {{{next|}}} | append=→ }}
-|}
-
+|}<noinclude>
+<pre>
+{{Nav
+|prev=LKN/Chapter1
+|next=LKN/Chapter3
+}}
+</pre>
+</noinclude>
