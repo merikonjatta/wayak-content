@@ -9,6 +9,7 @@ table.defalut th { border:1px solid #ccc; padding:2px; }
 table.nav    { border:1px solid #ccc; border-collapse:collapse; background:#f9f9f9; }
 table.nav td { border:1px solid #ccc; padding:2px; text-align:center; }
 table.nav td.up { background:#66BBE2; color:#fff; }
+table.nav td.up a { color:#fff; }
 table.nav td.prev,
 table.nav td.next { width: 30%; }
 table.nav td.here { width: 40%; }
