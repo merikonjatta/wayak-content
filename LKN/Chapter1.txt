@@ -2,7 +2,7 @@
 {{#set: title=第一章1: はじめに}}
 {{Nav
 |prev=LKN/Preface
-|next=LKN/Chapter1
+|next=LKN/Chapter2
 }}
 
 == 第一章: はじめに ==
@@ -19,5 +19,5 @@ Linuxに関わる仕事をしていれば、いつかカーネルを自分でビ
 
 {{Nav
 |prev=LKN/Preface
-|next=LKN/Chapter1
+|next=LKN/Chapter2
 }}
