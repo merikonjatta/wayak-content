@@ -1,0 +1,4 @@
+<div style="border:1px solid #999; background:#FFF; padding:0.5em;">
+[[File:lkn-trap.png|left]]{{{1}}}
+<div style="clear:both"></div>
+</div>
