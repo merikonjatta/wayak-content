@@ -1,0 +1,27 @@
+/* ここに書いたCSSはすべての外装に反映されます */
+
+/* コンテンツスタイル */
+table.default    { border:1px solid #ccc; border-collapse:collapse; background:#f9f9fa; }
+table.default td,
+table.defalut th { border:1px solid #ccc; padding:2px; }
+
+/* Navテンプレート */
+table.nav    { border:1px solid #ccc; border-collapse:collapse; background:#f9f9f9; }
+table.nav td { border:1px solid #ccc; padding:2px; text-align:center; }
+table.nav td.up { background:#66BBE2; color:#fff; }
+table.nav td.prev,
+table.nav td.next { width: 30%; }
+table.nav td.here { width: 40%; }
+
+/* Cavendishのレイアウトいじり */
+#side { width:160px; }
+#column-content { width: 785px; }
+
+/* Cavendishの文字いじり */
+#content h1.firstHeading { font-size:1em; border:0px; padding:0px; margin:0px; }
+border-image: initial;
+textarea { font-family:monospace; font-size:1em; }
+#nav div a,
+#nav div h5 { text-shadow: none; }
+#mBody { font-size: 13px; }
+
