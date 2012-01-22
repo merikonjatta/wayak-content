@@ -1,6 +1,13 @@
 <!--
 vim: noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki
 -->
+
+{{nav
+|up=[[LKN]]
+|here=LKN/Preface
+|next=[[LKN/Chapter1]]
+}}
+
 == まえがき ==
 
 はじめに本書の話をもらったときは、すでにLinuxカーネルのドキュメントで十分にカバーされている内容だろうと片付けてしまいました。カーネルをビルドし、インストールし、カスタマイズする手順はあまり難しいタスクだとは思えず

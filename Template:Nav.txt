@@ -1,0 +1,8 @@
+{| class="nav"
+ |-
+ | class="up" colspan="3" |'''{{{up}}}'''
+ |- 
+ | class="prev" | ←{{{prev|}}}
+ | class="here" | {{{here| {{FULLPAGENAME}} }}}
+ | class="next" | {{{next|}}}→
+ |}
