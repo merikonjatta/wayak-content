@@ -1,7 +1,7 @@
 ==Linux Kernel in a Nutshell==
 
 [[File:Linux_kernel_in_a_nutshell_small.jpg|thumb]]
-{{#set title=Linux Kernel in a Nutshell}}
+{{#set: title=Linux Kernel in a Nutshell}}
 
 {|class="default"
 |-

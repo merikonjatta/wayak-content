@@ -1,10 +1,8 @@
 <!--
 vim: noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki
--->
+--> {{#set: title=まえがき}}
 {{nav
-|up=[[LKN]]
-|here=LKN/Preface
-|next=[[LKN/Chapter1]]
+|next=LKN/Chapter1
 }}
 
 == まえがき ==
