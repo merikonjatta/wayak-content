@@ -15,17 +15,16 @@
 |-
 |Webサイト
 |http://www.kroah.com/lkn/
+|-
+|ライセンス
+|[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
 |}
 
 ==ライセンス==
-{|class="default"
-|-
-|原文ライセンス
-|[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
-|-
-|翻訳文ライセンス
-|[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
-|}
+
+翻訳文は原文がコピーレフトのため
+[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
+で公開しています。
 
 ==目次==
 * [[LKN/Preface|まえがき]]
