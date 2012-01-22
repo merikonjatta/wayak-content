@@ -1,3 +1,4 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
 ==Linux Kernel in a Nutshell==
 
 [[File:Linux_kernel_in_a_nutshell_small.jpg|thumb]]
@@ -28,22 +29,22 @@
 で公開しています。
 
 ==目次==
-* {{ TitleLink | LKN/Preface }}
+* {{ Link | LKN/Preface }}
 * Part I: カーネルをビルドする
-** {{ TitleLink | LKN/Chapter1 }}
-** {{ TitleLink | LKN/Chapter2 }}
-** {{ TitleLink | LKN/Chapter3 }}
-** {{ TitleLink | LKN/Chapter4 }}
-** {{ TitleLink | LKN/Chapter5 }}
-** {{ TitleLink | LKN/Chapter6 }}
+** {{ Link | LKN/Chapter1 }}
+** {{ Link | LKN/Chapter2 }}
+** {{ Link | LKN/Chapter3 }}
+** {{ Link | LKN/Chapter4 }}
+** {{ Link | LKN/Chapter5 }}
+** {{ Link | LKN/Chapter6 }}
 * Part II: カスタマイズ
-** {{ TitleLink | LKN/Chapter8 }}
-** {{ TitleLink | LKN/Chapter9 }}
+** {{ Link | LKN/Chapter8 }}
+** {{ Link | LKN/Chapter9 }}
 * Part III: リファレンス
-** {{ TitleLink | LKN/Chapter9 }}
-** {{ TitleLink | LKN/Chapter10 }}
-** {{ TitleLink | LKN/Chapter11 }}
+** {{ Link | LKN/Chapter9 }}
+** {{ Link | LKN/Chapter10 }}
+** {{ Link | LKN/Chapter11 }}
 * Part IV: 付録
-** {{ TitleLink | LKN/AppendixA }}
-** {{ TitleLink | LKN/AppendixB }}
+** {{ Link | LKN/AppendixA }}
+** {{ Link | LKN/AppendixB }}
 
