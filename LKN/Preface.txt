@@ -1,7 +1,6 @@
 <!--
 vim: noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki
 -->
-
 {{nav
 |up=[[LKN]]
 |here=LKN/Preface
