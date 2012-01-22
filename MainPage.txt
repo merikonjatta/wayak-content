@@ -1,8 +1,14 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
 ==Wayak==
 Wayakは、フリーなライセンスで公開されている英語書籍を和訳するプロジェクトです。
 
 Wayakは2011年度[http://rohm.drm.doshisha.ac.jp/ 同志社ローム記念館プロジェクト] です。
 
 ==書籍==
-[[LKN|Linux Kernel in a Nutshell]]
+
+{|-
+|[[File:Linux_kernel_in_a_nutshell_small.jpg|thumb|left|link=LKN]]
+|[[LKN|Linux Kernel in a Nutshell]]
+|{{#show: LKN | ?summary#}}
+|}
 
