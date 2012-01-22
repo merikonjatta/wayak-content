@@ -1,2 +1,18 @@
-{{ #if: {{{1|}}} | [[ {{{prepend|}}} {{{1}}} | {{#show: {{{1}}} | ?title#}} {{{append|}}} ]] | }}
+{{ #if: {{{1|}}}
+| [[ {{{prepend|}}} {{{1}}} | {{#if: {{#show: {{{1}}} | ?title#}} | {{#show: {{{1}}} | ?title#}} | {{{1}}} }} {{{append|}}} ]]
+| }}<noinclude>
+<pre>
+* {{TitleLink | PageName }}
+* {{TitleLink | LKN}}
+</pre>
 
+* {{TitleLink | PageName }}
+* {{TitleLink | LKN }}
+
+次のようにSemantic MediaWikiのプロパティ title をセットしているページならば、ページ名ではなくタイトルを表示したリンクになります。
+
+<nowiki>
+{{#set: title=表示上のタイトル}}
+</nowiki>
+
+</noinclude>
