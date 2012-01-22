@@ -1,5 +1,5 @@
 <!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
-{{#set: title=第一章1: はじめに}}
+{{#set: title=第1章: はじめに}}
 {{Nav
 |prev=LKN/Preface
 |next=LKN/Chapter2
