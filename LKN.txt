@@ -28,22 +28,22 @@
 で公開しています。
 
 ==目次==
-* [[LKN/Preface|まえがき]]
+* {{ TitleLink | LKN/Preface }}
 * Part I: カーネルをビルドする
-** [[LKN/Chapter1|第1章: はじめに]]
-** [[LKN-Chapter2|第2章: 必要事項]]
-** [[LKN-Chapter3|第3章: カーネルソースを入手する]]
-** [[LKN-Chapter4|第4章: コンフィギュアしてビルドする]]
-** [[LKN-Chapter5|第5章: インストールしてブートする]]
-** [[LKN-Chapter6|第6章: アップグレードする]]
+** {{ TitleLink | LKN/Chapter1 }}
+** {{ TitleLink | LKN/Chapter2 }}
+** {{ TitleLink | LKN/Chapter3 }}
+** {{ TitleLink | LKN/Chapter4 }}
+** {{ TitleLink | LKN/Chapter5 }}
+** {{ TitleLink | LKN/Chapter6 }}
 * Part II: カスタマイズ
-** [[LKN-Chapter7|第7章: カーネルのカスタマイズ]]
-** [[LKN-Chapter8|第8章: 設定レシピ集]]
+** {{ TitleLink | LKN/Chapter8 }}
+** {{ TitleLink | LKN/Chapter9 }}
 * Part III: リファレンス
-** [[LKN-Chapter9|第9章: ブート時のコマンドラインリファレンス]]
-** [[LKN-Chapter10|第10章: ビルド時のコマンドラインリファレンス]]
-** [[LKN-Chapter11|第11章: オプションリファレンス]]
+** {{ TitleLink | LKN/Chapter9 }}
+** {{ TitleLink | LKN/Chapter10 }}
+** {{ TitleLink | LKN/Chapter11 }}
 * Part IV: 付録
-** [[LKN-AppendixA|付録A: ユーティリティ]]
-** [[LKN-AppendixB|付録B: 参考文献]]
+** {{ TitleLink | LKN/AppendixA }}
+** {{ TitleLink | LKN/AppendixB }}
 
