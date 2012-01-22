@@ -1,6 +1,6 @@
 {| class="nav"
  |-
- | class="up" colspan="3" |'''{{{up}}}'''
+ | class="up" colspan="3" |'''{{#ask: {{{up}}} | ?title}}'''
  |- 
  | class="prev" | ←{{{prev|}}}
  | class="here" | {{{here| {{FULLPAGENAME}} }}}

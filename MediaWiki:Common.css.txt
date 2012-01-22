@@ -21,7 +21,7 @@ table.nav td.here { width: 40%; }
 /* Cavendishの文字いじり */
 #content h1.firstHeading { font-size:1em; border:0px; padding:0px; margin:0px; }
 border-image: initial;
-textarea { font-family:monospace; font-size:1em; }
+textarea { font-family:monospace !important; font-size:1em !important; }
 #nav div a,
 #nav div h5 { text-shadow: none; }
 #mBody { font-size: 13px; }
