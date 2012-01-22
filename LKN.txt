@@ -3,46 +3,46 @@
 
 {|class="default"
 |-
-|’˜Ò
+|è‘—è€…
 |Greg Kroah-Hartman
 |-
-|o”ÅĞ
+|å‡ºç‰ˆç¤¾
 |O'Reilly
 |-
-|o”Å”N
+|å‡ºç‰ˆå¹´
 |2006
 |-
-|WebƒTƒCƒg
+|Webã‚µã‚¤ãƒˆ
 |http://www.kroah.com/lkn/
 |}
 
-==ƒ‰ƒCƒZƒ“ƒX==
+==ãƒ©ã‚¤ã‚»ãƒ³ã‚¹==
 {|class="default"
 |-
-|Œ´•¶ƒ‰ƒCƒZƒ“ƒX
+|åŸæ–‡ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
 |[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
 |-
-|–|–ó•¶ƒ‰ƒCƒZƒ“ƒX
+|ç¿»è¨³æ–‡ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
 |[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
 |}
 
-==–ÚŸ==
-* [[LKN/Preface|‚Ü‚¦‚ª‚«]]
-* Part I: ƒJ[ƒlƒ‹‚ğƒrƒ‹ƒh‚·‚é
-** [[LKN/Chapter1|‘æ1Í: ‚Í‚¶‚ß‚É]]
-** [[LKN-Chapter2|‘æ2Í: •K—v–€]]
-** [[LKN-Chapter3|‘æ3Í: ƒJ[ƒlƒ‹ƒ\[ƒX‚ğ“üè‚·‚é]]
-** [[LKN-Chapter4|‘æ4Í: ƒRƒ“ƒtƒBƒMƒ…ƒA‚µ‚Äƒrƒ‹ƒh‚·‚é]]
-** [[LKN-Chapter5|‘æ5Í: ƒCƒ“ƒXƒg[ƒ‹‚µ‚Äƒu[ƒg‚·‚é]]
-** [[LKN-Chapter6|‘æ6Í: ƒAƒbƒvƒOƒŒ[ƒh‚·‚é]]
-* Part II: ƒJƒXƒ^ƒ}ƒCƒY
-** [[LKN-Chapter7|‘æ7Í: ƒJ[ƒlƒ‹‚ÌƒJƒXƒ^ƒ}ƒCƒY]]
-** [[LKN-Chapter8|‘æ8Í: İ’èƒŒƒVƒsW]]
-* Part III: ƒŠƒtƒ@ƒŒƒ“ƒX
-** [[LKN-Chapter9|‘æ9Í: ƒu[ƒg‚ÌƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒŠƒtƒ@ƒŒƒ“ƒX]]
-** [[LKN-Chapter10|‘æ10Í: ƒrƒ‹ƒh‚ÌƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒŠƒtƒ@ƒŒƒ“ƒX]]
-** [[LKN-Chapter11|‘æ11Í: ƒIƒvƒVƒ‡ƒ“ƒŠƒtƒ@ƒŒƒ“ƒX]]
-* Part IV: •t˜^
-** [[LKN-AppendixA|•t˜^A: ƒ†[ƒeƒBƒŠƒeƒB]]
-** [[LKN-AppendixB|•t˜^B: Ql•¶Œ£]]
+==ç›®æ¬¡==
+* [[LKN/Preface|ã¾ãˆãŒã]]
+* Part I: ã‚«ãƒ¼ãƒãƒ«ã‚’ãƒ“ãƒ«ãƒ‰ã™ã‚‹
+** [[LKN/Chapter1|ç¬¬1ç« : ã¯ã˜ã‚ã«]]
+** [[LKN-Chapter2|ç¬¬2ç« : å¿…è¦äº‹é …]]
+** [[LKN-Chapter3|ç¬¬3ç« : ã‚«ãƒ¼ãƒãƒ«ã‚½ãƒ¼ã‚¹ã‚’å…¥æ‰‹ã™ã‚‹]]
+** [[LKN-Chapter4|ç¬¬4ç« : ã‚³ãƒ³ãƒ•ã‚£ã‚®ãƒ¥ã‚¢ã—ã¦ãƒ“ãƒ«ãƒ‰ã™ã‚‹]]
+** [[LKN-Chapter5|ç¬¬5ç« : ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¦ãƒ–ãƒ¼ãƒˆã™ã‚‹]]
+** [[LKN-Chapter6|ç¬¬6ç« : ã‚¢ãƒƒãƒ—ã‚°ãƒ¬ãƒ¼ãƒ‰ã™ã‚‹]]
+* Part II: ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚º
+** [[LKN-Chapter7|ç¬¬7ç« : ã‚«ãƒ¼ãƒãƒ«ã®ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚º]]
+** [[LKN-Chapter8|ç¬¬8ç« : è¨­å®šãƒ¬ã‚·ãƒ”é›†]]
+* Part III: ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹
+** [[LKN-Chapter9|ç¬¬9ç« : ãƒ–ãƒ¼ãƒˆæ™‚ã®ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹]]
+** [[LKN-Chapter10|ç¬¬10ç« : ãƒ“ãƒ«ãƒ‰æ™‚ã®ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹]]
+** [[LKN-Chapter11|ç¬¬11ç« : ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹]]
+* Part IV: ä»˜éŒ²
+** [[LKN-AppendixA|ä»˜éŒ²A: ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£]]
+** [[LKN-AppendixB|ä»˜éŒ²B: å‚è€ƒæ–‡çŒ®]]
 

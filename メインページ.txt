@@ -1,8 +1,8 @@
 ==Wayak==
-Wayak�́A�t���[�ȃ��C�Z���X�Ō��J����Ă���p�ꏑ�Ђ�a�󂷂�v���W�F�N�g�ł��B
+Wayakは、フリーなライセンスで公開されている英語書籍を和訳するプロジェクトです。
 
-Wayak��2011�N�x[http://rohm.drm.doshisha.ac.jp/ ���u�Ѓ��[���L�O�كv���W�F�N�g] �ł��B
+Wayakは2011年度[http://rohm.drm.doshisha.ac.jp/ 同志社ローム記念館プロジェクト] です。
 
-==����==
+==書籍==
 [[LKN|Linux Kernel in a Nutshell]]
 
