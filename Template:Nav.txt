@@ -1,9 +1,9 @@
 {| class="nav"
  |-
- | class="up" colspan="3" |''' {{ TitleLink| {{{up | {{#titleparts: {{FULLPAGENAME}} | -1 }} }}} }}'''
+ | class="up" colspan="3" |''' {{ Link| {{{up | {{#titleparts: {{FULLPAGENAME}} | -1 }} }}} }}'''
  |- 
- | class="prev" | {{ TitleLink | {{{prev|}}} | prepend=← }}
+ | class="prev" | {{ Link | {{{prev|}}} | prepend=← }}
  | class="here" | {{#show: {{FULLPAGENAME}} | ?title#}}
- | class="next" | {{ TitleLink | {{{next|}}} | append=→ }}
+ | class="next" | {{ Link | {{{next|}}} | append=→ }}
 |}
 
