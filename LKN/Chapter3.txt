@@ -18,8 +18,8 @@
 
 例で説明しましょう。図3-1を見てください。まず2.6.17が安定版としてリリースされます。次に新機能を付け加えた''-rc''バージョンを開発版としてリリースしていきます。これらの目的は人々に試してもらい、新機能をデバッグするためです。この開発版が十分安定したと開発者の間でコンセンサスがとれたら、2.6.18としてリリースされます。このサイクルにだいたい2〜3ヶ月かかります。
 
-[[File:lkn-fig0301.gif]]
-図3-1. カーネル開発のリリースサイクル
+[[File:lkn-fig0301.gif|none|frame|図3-1. カーネル開発のリリースサイクル]]
+
 
 新機能の開発と同時に、2.6.17.1、2.6.17.2など、バグ修正とセキュリティアップデートを施した安定版が公開されていきました。
 
@@ -32,36 +32,39 @@ Linuxカーネルのソースコードは全て''kernel.org''のミラーサイ�
 
 メインの http://www.kernel.org/ では、図3-2のように全てのツリーの全てのバージョンがリストアップされています。
 
-[[File:lkn-fig0302.gif]]
-図3-2. kernel.orgのメインサイト
+[[File:lkn-fig0302.gif|none|frame|図3-2. kernel.orgのメインサイト]]
 
 最新のカーネルバージョンをダウンロードするには、そのバージョンの行にある''F''の文字をクリックします。これでカーネルのソースがまるごとダウンロードされます。もしくは、2.6系のカーネルを含むサブディレクトリ http://www.us.kernel.org/pub/linux/kernel/v2.6/ まで辿って行ってもいいです（図3-3）。
 
-[[File:lkn-fig0303.gif]]
-図3-3. カーネル2.6のソースディレクトリ
+[[File:lkn-fig0303.gif|none|frame|図3-3. カーネル2.6のソースディレクトリ]]
 
 あるいは、ディストリビューションに付属しているであろう''wget''か''curl''を使ってコマンドラインからダウンロードすることもできます。
 
 例えば''wget''でカーネル2.6.17.8をダウンロードするには：
 <pre>
 $ wget http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.17.8.tar.gz
---17:44:55-- http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.17.8. tar.gz
-=> `linux-2.6.17.8.tar.gz' Resolving www.kernel.org... 204.152.191.5, 204.152.191.37 Connecting to www.kernel.org|204.152.191.5|:80... connected. HTTP request sent, awaiting response... 200 OK
-Length: 51,707,742 (49M) [application/x-gzip] 100%[=============================================>] 51,707,742	35.25K/s ETA 00:00 18:02:48 (47.12 KB/s) - `linux-2.6.17.8.tar.gz' saved [51707742/51707742]
+--17:44:55--  http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.17.8. tar.gz
+      => `linux-2.6.17.8.tar.gz'
+Resolving www.kernel.org... 204.152.191.5, 204.152.191.37
+Connecting to www.kernel.org|204.152.191.5|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 51,707,742 (49M) [application/x-gzip]
+100%[=============================================>] 51,707,742	  35.25K/s  ETA 00:00
+18:02:48 (47.12 KB/s) - `linux-2.6.17.8.tar.gz' saved [51707742/51707742]
 </pre>
 
 ''curl''を使う場合は：
 <pre>
-$ curl http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.17.8.tar.gz \ -o linux-2.6.17.8.tar.gz
+$ curl http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.17.8.tar.gz \
+-o linux-2.6.17.8.tar.gz
 % Total	% Received % Xferd Average Speed	Time	Time	Time Current
-Dload	Upload	Total	Spent	Left
+                            Dload	Upload	Total	Spent	Left
 Speed 100 49.3M 100 49.3M	0	0 50298	0 0:17:08 0:17:08 --:--:-- 100k
 </pre>
 
 カーネルのバージョンについての説明を見るには、 http://www.kernel.org/kdist/finger_banner にアクセスしてください（図3-4）。
 
-[[File:lkn-fig0304.gif]]
-図3-4. 最新のカーネルバージョン
+[[File:lkn-fig0304.gif|none|frame|図3-4. 最新のカーネルバージョン]]
 
 
 == ダウンロードしたソースの扱い ==
