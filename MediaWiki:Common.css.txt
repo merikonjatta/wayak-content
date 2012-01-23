@@ -15,7 +15,7 @@ table.nav td.next { width: 30%; }
 table.nav td.here { width: 40%; }
 
 /* Cavendishのレイアウトいじり */
-#side { width:160px; }
+#side           { width:160px; }
 #column-content { width: 785px; }
 
 /* Cavendishの文字いじり */
