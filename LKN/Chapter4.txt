@@ -69,7 +69,7 @@ $ make defconfig
 インタラクティブなコンフィグツールは主に3つ用意されています。CUIで動作する''menuconfig''、GTK+のGUIで動作する''gconfig''、そしてQTのGUIで動作する''xconfig''です。
 
 
-=== CUIでコンフィグする ==
+=== CUIでコンフィグする ===
 
 ''menuconfig''はCUIプログラムですが、キーボードの矢印キーを使ってナビゲートすることができます。起動するには
 
