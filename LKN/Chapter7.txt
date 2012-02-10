@@ -1,0 +1,16 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第7章: カーネルのカスタマイズ}}
+{{Nav
+|prev=LKN/Chapter6
+|next=LKN/Chapter8
+}}
+
+= 第7章: カーネルのカスタマイズ =
+
+
+<references/>
+
+{{Nav
+|prev=LKN/Chapter6
+|next=LKN/Chapter8
+}}

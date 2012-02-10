@@ -1,0 +1,235 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第6章: カーネルのアップグレード}}
+{{Nav
+|prev=LKN/Chapter5
+|next=LKN/Chapter7
+}}
+
+= 第6章: カーネルのアップグレード =
+
+カスタムのカーネルをビルドして、ほぼ完璧に動いているのにひとつだけ不具合があって、どうやら最新版では修正されたようだとか、セキュリティホールが発見されてそれを修正した新バージョンが公開されたというのはよくある話です。こういった場合にはカーネルをアップグレードする必要がありますが、これまでに組み上げた完璧なカーネルコンフィギュレーションを無駄にしたくはありません。
+
+この章ではコンフィギュレーションを保持したままカーネルを新しいバージョンにアップグレードする方法を解説します。
+
+まずは、カーネルディレクトリの''.config''ファイルを何かトラブルがあった時のためにバックアップしておいてください。
+
+ $ '''cd ~/linux/linux-2.6.17.11'''
+ $ '''cp .config ../good_config'''
+
+カーネルのアップグレードに必要なステップは5つです。
+
+# 新しいソースコードを入手する
+# 古いソースコードに変更内容を適用する
+# 以前のカーネルコンフィギュレーションをもとに再コンフィギュアする
+# ビルドする
+# インストールする
+
+最後の2つは以前の章で解説したとおりですので、ここでは最初の3ステップを解説します。
+
+以後、2.6.17.9を正常にビルドできていて、2.6.17.11へアップグレードしたいという状況で説明します。
+
+
+== 新しいソースをダウンロードする ==
+
+通常、アップデートごとにソースコード全体をダウンロードするのは時間と帯域幅の無駄ですので望ましくありませんし、カーネル開発者たちもそのことは理解しています。そこでカーネルを新バージョンにアップデートできるパッチが公開されています<ref>''patch''というプログラムで読み込むと元のソースツリーに変更が反映されるためパッチと呼ばれます。パッチファイルには、あるファイルを元に別のファイルを構成するための変更部分が記述されています。パッチファイルは人間でも読むことができます。開いてみると、削除すべき行と追加すべき行の一覧があり、その周辺の行の情報も見ることができます。</ref>。
+
+''kernel.org''のウェブサイトに行くと、図6-1のようにダウンロードできるバージョンの一覧がありましたね。
+
+[[File:lkn-fig0601.gif|none|frame|図6-1. kernel.orgのウェブサイト]]
+
+以前は<code>F</code>をクリックしてカーネルソース全体をダウンロードしましたが、今回はリリースの名前をクリックします。すると図6-2のようにパッチファイルがダウンロードできます。
+
+[[File:lkn-fig0602.gif|none|frame|図6-2. kernel.orgからパッチをダウンロードする]]
+
+アップグレードの際にはこういったパッチファイルが必要となります。しかしその前に、どのパッチファイルが必要かを判断しなければいけません。
+
+=== どのパッチをあてるか ===
+
+ひとつのパッチファイルでは、ある特定のリリースから別の特定のリリースにしかアップグレードできません。
+
+* 安定版パッチはカーネルのベースバージョンにだけ適用できます。つまり、2.6.17.10パッチは2.6.17にしか使えません（2.6.17.9などには使えません）。
+* ベースパッチは、別のベースバージョンにだけ適用できます。つまり、2.6.18パッチは2.6.17にしか使えません（2.6.17.yなどには使えません）。
+* インクリメンタルパッチは、あるリリースから、その次のリリースへアップグレードできます。これを使えばアップグレード前にカーネルをダウングレードする必要がなく、そのまま次のリリースへアップグレードできます。できるだけこのインクリメンタルパッチを利用することをお勧めします。
+
+=== パッチを見つける ===
+
+2.6.17.9から2.6.17.11へアップグレードしたいので、2つのパッチが必要です。2.6.17.9から2.6.17.10へのパッチと、2.6.17.10から2.6.17.11へのパッチです<ref>これ以上バージョン差がある場合は、一度2.6.17へダウングレードしてから安定版パッチを適用したほうが早いかも知れません。</ref>。
+
+安定版パッチとベースパッチはメインのソースツリーと同じディレクトリ構造で保管されています。インクリメンタルパッチはその下の''incr''ディレクトリにあります。この場合、''/pub/linux/kernel/v2.6/incr''ディレクトリを探します<ref>ここではFTPクライアントの''lftp''を使用しています。他のクライアントやWebブラウザでも構いません。</ref>。
+
+
+ $ '''cd &tilde;/linux'''
+ $ '''lftp ftp.kernel.org/pub/linux/kernel/v2.6/incr'''
+ cd ok, cwd=/pub/linux/kernel/v2.6/incr
+ lftp ftp.kernel.org:/pub/linux/kernel/v2.6/incr&gt; ls *2.6.17.9*.bz2
+ -rw-rw-r--    1 536      536          2872 Aug 22 19:23 patch-2.6.17.9-10.bz2
+ lftp ftp.kernel.org:/pub/linux/kernel/v2.6/incr&gt; get patch-2.6.17.9-10.bz2
+ 2872 bytes transferred
+ lftp ftp.kernel.org:/pub/linux/kernel/v2.6/incr&gt; get patch-2.6.17.10-11.bz2
+ 7901 bytes transferred
+ lftp ftp.kernel.org:/pub/linux/kernel/v2.6/incr&gt; exit
+ $ '''ls -F'''
+ good_config  linux-2.6.17.9/  patch-2.6.17.10-11.bz2  patch-2.6.17.9-10.bz2
+
+
+== パッチを適用する ==
+
+まずは圧縮されているパッチを''bzip2''コマンドで展開します。
+ $ '''bzip2 -dv patch-2.6.17.9-10.bz2'''
+   patch-2.6.17.9-10.bz2: done
+ $ '''bzip2 -dv patch-2.6.17.10-11.bz2'''
+   patch-2.6.17.10-11.bz2: done
+ $ '''ls -F'''
+ good_config  linux-2.6.17.9/  patch-2.6.17.10-11  patch-2.6.17.9-10 
+
+展開されたパッチファイルをソースに適用します。ソースディレクトリに入って
+ $ '''cd linux-2.6.17.9'''
+
+''patch''プログラムを走らせ、最初のパッチを適用します。
+ $ '''patch -p1 &gt; ../patch-2.6.17.9-10'''
+ patching file Makefile
+ patching file block/elevator.c
+ patching file fs/udf/super.c
+ patching file fs/udf/truncate.c
+ patching file include/net/sctp/sctp.h
+ patching file include/net/sctp/sm.h
+ patching file net/sctp/sm_make_chunk.c
+ patching file net/sctp/sm_statefuns.c
+ patching file net/sctp/socket.c
+
+エラーなどが起こっていないか、出力を確認します。''Makefile''をチェックしてカーネルのバージョン番号を見るのもいいでしょう。
+
+ $ '''head -n 5 Makefile'''
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 17
+ EXTRAVERSION = .10
+ NAME=Crazed Snow-Weasel
+
+これで2.6.17.10へアップグレードできましたので、つづけて2.6.17.11へのパッチを適用します。
+
+ $ '''patch -p1 &lt; ../patch-2.6.17.10-11'''
+ patching file Makefile
+ patching file arch/ia64/kernel/sys_ia64.c
+ patching file arch/sparc/kernel/sys_sparc.c
+ patching file arch/sparc64/kernel/sys_sparc.c
+ patching file drivers/char/tpm/tpm_tis.c
+ patching file drivers/ieee1394/ohci1394.c
+ patching file drivers/md/dm-mpath.c
+ patching file drivers/md/raid1.c
+ patching file drivers/net/sky2.c
+ patching file drivers/pci/quirks.c
+ patching file drivers/serial/Kconfig
+ patching file fs/befs/linuxvfs.c
+ patching file fs/ext3/super.c
+ patching file include/asm-generic/mman.h
+ patching file include/asm-ia64/mman.h
+ patching file include/asm-sparc/mman.h
+ patching file include/asm-sparc64/mman.h
+ patching file kernel/timer.c
+ patching file lib/spinlock_debug.c
+ patching file mm/mmap.c
+ patching file mm/swapfile.c
+ patching file net/bridge/netfilter/ebt_ulog.c
+ patching file net/core/dst.c
+ patching file net/core/rtnetlink.c
+ patching file net/ipv4/fib_semantics.c
+ patching file net/ipv4/netfilter/arp_tables.c
+ patching file net/ipv4/netfilter/ip_tables.c
+ patching file net/ipv4/netfilter/ipt_ULOG.c
+ patching file net/ipv4/route.c
+ patching file net/ipx/af_ipx.c
+ patching file net/netfilter/nfnetlink_log.c
+
+再度エラーがなかったか確認し、''Makefile''をチェックします。
+
+ $ '''head -n 5 Makefile'''
+ VERSION = 2
+ PATCHLEVEL = 6
+ SUBLEVEL = 17
+ EXTRAVERSION = .11
+ NAME=Crazed Snow-Weasel
+
+これで目標のバージョンまでカーネルソースを更新できました。ここでソースが入っているディレクトリ名を、現状を反映するのように反映しておきましょう。
+
+ $ '''cd ..'''
+ $ '''mv linux-2.6.17.9 linux-2.6.17.11'''
+ $ '''ls -F'''
+ good_config  linux-2.6.17.11/  patch-2.6.17.10-11  patch-2.6.17.9-10
+
+
+== カーネルを再コンフィギュアする ==
+
+前回は''make menuconfig''、''gconfig''、''xconfig''を使ってオプションを変更しましたが、今回は既にコンフィギュレーションができていますので、新バージョンで使えるようになった新たなオプションを追加するだけで済みます。このためには''make oldconfig''か''make silentoldconfig''を使います。
+
+''make oldconfig''は単に現在の''.config''ファイルを、最新版に合わせて更新します。全てのオプションについて質問されますが、既に''.config''に記述してあった内容は自動的に適用されます。''.config''にない内容についてはユーザに入力を求めます。全てのオプションが設定されるまでこれが繰り返されます。
+
+''make silentconfig''は''oldconfig''と同じですが、自動的に適用されるオプションについては画面に何も出力されません。
+
+通常、安定版から安定版へアップグレードするときは新たなオプションが追加されることはありません（安定版はそういうポリシーだからです）。その場合、何もユーザに入力を求める必要がありませんので、最初から最後まで自動的に処理が完了します。2.6.17.9から2.6.17.10へのアップグレードもこの範疇です。
+
+ $ '''cd linux-2.6.17.11'''
+ $ '''make silentconfig'''
+ scripts/kconfig/conf -s arch/i386/Kconfig
+ #
+ # using defaults found in .config
+ #
+
+新たなオプションが追加されているときは以下のようになります。この場合、''Mutex debugging''が新しく登場したオプションです。
+
+ $ '''make silentoldconfig'''
+ scripts/kconfig/conf -s arch/i386/Kconfig
+ #
+ # using defaults found in .config
+ #
+ *
+ * Restart config...
+ *
+ *
+ * Kernel hacking
+ *
+ Show timing information on printks (PRINTK_TIME) [Y/n/?] y
+ Magic SysRq key (MAGIC_SYSRQ) [Y/n/?] y
+ Kernel debugging (DEBUG_KERNEL) [Y/n/?] y
+   Kernel log buffer size (16 =&gt; 64KB, 17 =&gt; 128KB) (LOG_BUF_SHIFT) [16] 16
+   Detect Soft Lockups (DETECT_SOFTLOCKUP) [Y/n/?] y
+   Collect scheduler statistics (SCHEDSTATS) [N/y/?] n
+   Debug slab memory allocations (DEBUG_SLAB) [Y/n/?] y
+     Memory leak debugging (DEBUG_SLAB_LEAK) [Y/n] y
+   Mutex debugging, deadlock detection (DEBUG_MUTEXES) [N/y/?] (NEW) y
+
+ここでプログラムは停止し、入力を求めます。yを押すと続行します。
+
+   Spinlock debugging (DEBUG_SPINLOCK) [Y/n/?] y
+   Sleep-inside-spinlock checking (DEBUG_SPINLOCK_SLEEP) [Y/n/?] y
+   kobject debugging (DEBUG_KOBJECT) [N/y/?] n
+   Highmem debugging (DEBUG_HIGHMEM) [N/y/?] n
+   Compile the kernel with debug info (DEBUG_INFO) [N/y/?] n
+ Debug Filesystem (DEBUG_FS) [Y/?] y
+ Debug VM (DEBUG_VM) [N/y/?] n
+ Compile the kernel with frame pointers (FRAME_POINTER) [N/y/?] n
+ Compile the kernel with frame unwind information (UNWIND_INFO) [N/y/?] n
+ Force gcc to inline functions marked 'inline' (FORCED_INLINING) [N/y/?] n
+ torture tests for RCU (RCU_TORTURE_TEST) [N/m/y/?] n
+ Check for stack overflows (DEBUG_STACKOVERFLOW) [N/y/?] n
+ Stack utilization instrumentation (DEBUG_STACK_USAGE) [N/y/?] n
+ Stack backtraces per line (STACK_BACKTRACE_COLS) [2] 2
+ *
+ * Page alloc debug is incompatible with Software Suspend on i386
+ *
+ Write protect kernel read-only data structures (DEBUG_RODATA) [N/y/?] n
+ Use 4Kb for kernel stacks instead of 8Kb (4KSTACKS) [N/y/?] n
+
+つまるところ、新しいカーネルコンフィギュレーションを作るには''make''に少しだけ違うオプションを与えるだけということです。以前に述べたGUIやCUIプログラムを使う必要はありません。
+
+
+== 自動化できないの？ ==
+
+パッチファイルのダウンロードから展開、適用までは自動化できてもよさそうに見えます。カーネル開発者はまさにそういう思想の持ち主で、''ketchup''というプログラムがその用途で提供されています。このプログラムの詳細と使い方については{{Link|LKN/AppendixA}}を参照してください。
+
+<references/>
+
+{{Nav
+|prev=LKN/Chapter5
+|next=LKN/Chapter7
+}}
