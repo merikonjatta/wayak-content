@@ -23,15 +23,15 @@ USBストレージデバイスは''lsusb''で確認できます。以下コマ�
        bInterfaceClass         8 Mass Storage
 有効にするには
 
-# USBストレージは、実際にはUSB接続を利用するUSB SCSIデバイスです。まずSCSIを有効にします。
+1. USBストレージは、実際にはUSB接続を利用するUSB SCSIデバイスです。まずSCSIを有効にします。
  Device Drivers
      SCSI Device Support
          [*] SCSI Device Support
-# 同じくSCSIの中で、「SCSI disk support」をオンにします。
+2. 同じくSCSIの中で、「SCSI disk support」をオンにします。
  Device Drivers
      SCSI Device Support
          [*] SCSI disk support
-# USBストレージサポートをオンにします。
+3. USBストレージサポートをオンにします。
  Device Drivers
     USB Support
     [M] USB Mass Storage support
