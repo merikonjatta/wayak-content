@@ -19,24 +19,22 @@
 
 カーネルをコンフィギュアするもっとも基本的な方法は、''make config''を使う方法です。
 
-<pre>
-$ cd linux-2.6.17.10
-$ make config
- make config
-scripts/kconfig/conf arch/i386/Kconfig
-*
-* Linux Kernel Configuration
-*
-*
-* Code maturity level options
-Prompt for development and/or incomplete code/drivers (EXPERIMENTAL) [Y/n/?] Y
-*
-* General setup
-*
-Local version - append to kernel release (LOCALVERSION) []
-Automatically append version information to the version string (LOCALVERSION_AUTO) [Y/n/?] Y
-...
-</pre>
+ $ '''cd linux-2.6.17.10'''
+ $ '''make config'''
+  make config
+ scripts/kconfig/conf arch/i386/Kconfig
+ *
+ * Linux Kernel Configuration
+ *
+ *
+ * Code maturity level options
+ Prompt for development and/or incomplete code/drivers (EXPERIMENTAL) [Y/n/?] '''Y'''
+ *
+ * General setup
+ *
+ Local version - append to kernel release (LOCALVERSION) []
+ Automatically append version information to the version string (LOCALVERSION_AUTO) [Y/n/?] '''Y'''
+ ...
 
 このプログラムは、カーネルのコンフィグオプションについてそれぞれ、有効にするかどうかの質問をしてきます。ふつう、選択肢は''[Y/m/n/?]''といった形式で提示されます。大文字になっているのがデフォルトの選択肢で、エンターを押すだけでそれを選んだことになります。この場合の4つの選択肢は
 
@@ -54,10 +52,8 @@ Automatically append version information to the version string (LOCALVERSION_AUT
 
 このデフォルトコンフィギュレーションを作成するには、次のコマンドを実行します。
 
-<pre>
-$ cd linux-2.6.17.10
-$ make defconfig
-</pre>
+ $ '''cd linux-2.6.17.10'''
+ $ '''make defconfig'''
 
 大量のオプションが画面をスクロールし、''.conig''ファイルが生成されます。これでコンフィギュレーションは一応完了ですが、マシンに合わせてカスタマイズする必要があります。
 
@@ -73,9 +69,7 @@ $ make defconfig
 
 ''menuconfig''はCUIプログラムですが、キーボードの矢印キーを使ってナビゲートすることができます。起動するには
 
-<pre>
-$ make menuconfig
-</pre>
+ $ '''make menuconfig'''
 
 図4-1のような画面が出るでしょう。
 
@@ -134,6 +128,32 @@ $ make menuconfig
 
 
 == カーネルをビルドする ==
+
+コンフィギュレーションが完了したらいざカーネルをビルドします。とは言っても、たったこれだけのコマンドです：
+
+ $ '''make'''
+  CHK     include/linux/version.h
+  UPD     include/linux/version.h
+  SYMLINK include/asm -&gt; include/asm-i386
+  SPLIT   include/linux/autoconf.h -&gt; include/config/*
+  CC      arch/i386/kernel/asm-offsets.s
+  GEN     include/asm-i386/asm-offsets.h
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/mod/mk_elfconfig
+  MKELF   scripts/mod/elfconfig.h
+  HOSTCC  scripts/mod/file2alias.o
+  HOSTCC  scripts/mod/modpost.o
+  HOSTCC  scripts/mod/sumversion.o
+  HOSTLD  scripts/mod/modpost
+  HOSTCC  scripts/kallsyms
+  HOSTCC  scripts/conmakehash
+  HOSTCC  scripts/bin2c
+  CC      init/main.o
+  CHK     include/linux/compile.h
+  UPD     include/linux/compile.h
+  CC      init/version.o
+  CC      init/do_mounts.o
+ ...
 
 <references/>
 
