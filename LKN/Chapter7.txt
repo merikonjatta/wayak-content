@@ -269,8 +269,116 @@ PCIデバイスは製造元IDとデバイスIDによって識別されます。�
 
 {{LKN/Tip | ほとんどのディストリビューションでは''lspci''は''/usr/sbin''にありますが、なければ以下のコマンドで調べられます。
  $ '''which lspci'''
- /usr/bin/lspci
+ /usr/sbin/lspci
 }}
+
+''lspci''の出力の最初の数文字はこのデバイスのPCIバスIDを示します（<code>06:04.0</code>）。''sysfs''を探索する際にこの文字列を使います。
+
+''sysfs''に入り、全てのPCIデバイスの一覧で名前を確認します。
+
+ $ '''cd /sys/bus/pci/devices/'''
+ $ '''ls'''
+ 0000:00:00.0  0000:00:1d.0  0000:00:1e.0  0000:00:1f.3  0000:06:03.3
+ 0000:00:02.0  0000:00:1d.1  0000:00:1f.0  0000:06:03.0  0000:06:03.4
+ 0000:00:02.1  0000:00:1d.2  0000:00:1f.1  0000:06:03.1  0000:06:04.0
+ 0000:00:1b.0  0000:00:1d.7  0000:00:1f.2  0000:06:03.2  0000:06:05.0
+
+冒頭の<code>0000:</code>はこの際無視します<ref>64bitプロセッサの中には''lspci''でこのプレフィックスが表示されるものもありますが、大半のLinuxマシンでは表示されません。</ref>。先ほどのバスIDに相当するディレクトリに移動します。
+
+ $ '''cd 0000:06:04.0'''
+
+この中で''vendor''と''device''各ファイルの中身を確認します。
+
+ $ '''cat vendor'''
+ 0x10ec
+ $ '''cat device'''
+ 0x8139
+
+これらが製造元IDとデバイスIDです。カーネルはこれらの値を使ってデバイスとドライバを紐付けます。PCIドライバはカーネルにどういった製造元IDとデバイスIDをサポートするかを通知し、それによってカーネルは紐付けを行うのです。これらの値をどこかにメモしておいてください。
+
+次に、この製造元IDとデバイスIDをサポートすると宣言しているカーネルドライバを探します。まずカーネルのソースディレクトリに移動します。
+
+ $ '''cd &tilde;/linux/linux-2.6.17.8/'''
+
+PCI IDが最もみつかりやすいのは''include/linux/pci_ids.h''ファイルです。このファイルの内容を製造元IDで検索します。
+
+ $ '''grep -i 0x10ec include/linux/pci_ids.h'''
+ #define PCI_VENDOR_ID_REALTEK           0x10ec
+
+ここで定義されている<code>PCI_VENDOR_ID_REALTEK</code>という定数がデバイスドライバでも使われているはずです。
+
+念のため、同じファイル内でデバイスIDを検索してみます。
+
+ $ '''grep -i 0x8139 include/linux/pci_ids'''.h
+ #define PCI_DEVICE_ID_REALTEK_8139      0x8139
+
+この定義も後に役立ちます。
+
+さて、この製造元定数を利用しているソースファイルを探します。
+
+ $ '''grep -Rl PCI_VENDOR_ID_REALTEK *'''
+ include/linux/pci_ids.h
+ drivers/net/r8169.c
+ drivers/net/8139too.c
+ drivers/net/8139cp.c
+
+最初のファイルは先程検索したファイルなので無視して結構です。''drivers/net/''に位置する残りの3つのファイルはより詳しく見る必要があります。
+
+これらのうち一つのファイルをエディタで開き、<code>PCI_VENDOR_ID_REALTEK</code>を検索します。''drivers/net/r8169c''では以下のような箇所に登場します。
+
+ static struct pci_device_id rtl8169_pci_tbl[] = {
+         { PCI_DEVICE(PCI_VENDOR_ID_REALTEK, 0x8169), },
+         { PCI_DEVICE(PCI_VENDOR_ID_REALTEK, 0x8129), },
+         { PCI_DEVICE(PCI_VENDOR_ID_DLINK,   0x4300), },
+         { PCI_DEVICE(0x16ec,                0x0116), },
+         { PCI_VENDOR_ID_LINKSYS,            0x1032, PCI_ANY_ID, 0x0024, },
+         {0,},
+ };
+
+このようにPCIドライバは、対応するデバイスの一覧を、<code>struct pci_device_id</code>値の配列として持っています。この一覧を見ればドライバが特定のデバイスに対応しているかどうかが分かります。ここでは製造元IDは一致しますが、その右側のデバイスIDの中に目的の0x8139がありません。したがってこのドライバは目的のデバイスに対応していません。
+
+続いて''drivers/net/8139too.c''を見てみます。
+
+ if (pdev-&gt;vendor == PCI_VENDOR_ID_REALTEK &amp;&amp;
+     pdev-&gt;device == PCI_DEVICE_ID_REALTEK_8139 &amp;&amp; pci_rev &gt;= 0x20) {
+     dev_info(&amp;pdev-&gt;dev,
+            "This (id %04x:%04x rev %02x) is an enhanced 8139C+ chip\n",
+            pdev-&gt;vendor, pdev-&gt;device, pci_rev);
+     dev_info(&amp;pdev-&gt;dev,
+            "Use the \"8139cp\" driver for improved performance and stability.\n");
+ }
+
+<code>PCI_VENDOR_ID_REALTEK</code>と同時に<code>PCI_DEVICE_ID_REALTEK_8139</code>がチェックされていますが、一致した場合は「性能と安定性向上のため8139cpをお使いください」というメッセージが出るようになっています。次はそのファイルを見てみたほうがいいかも知れません。これほど分かりやすいヒントが出ないこともあるでしょうが、この場合、先ほどのような<code>struct pci_device_id</code>の変数およびその中のデバイスidペアが見つかりませんので、このドライバでは対応していないと予想できます。
+
+最後に''drivers/net/8139cp.c''を見てみます。
+
+ static struct pci_device_id cp_pci_tbl[] = {
+         { PCI_VENDOR_ID_REALTEK, PCI_DEVICE_ID_REALTEK_8139,
+           PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
+         { PCI_VENDOR_ID_TTTECH, PCI_DEVICE_ID_TTTECH_MC322,
+           PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
+         { },
+ };
+ MODULE_DEVICE_TABLE(pci, cp_pci_tbl);
+
+ここでは目的の製造元IDとデバイスIDが両方使われています。したがってこのドライバは対応してるはずです。
+
+これでドライバ名が分かりましたので、あとは前節の手順に従ってカーネルのコンフィグオプションを探すだけになります。
+
+まとめると、特定のPCIデバイスをコントロールするPCIドライバを探す手順は以下のようになります：
+
+# ''lspci''を使ってデバイスが接続されているPCIバスIDを見つけます。
+# ''sys/bus/pci/devices/0000:bus_id''ディレクトリに入ります。''bus_id''は先ほど見つけたバスIDです。
+# ''vendor''と''device''ファイルの内容をメモします。
+# カーネルソースの場所に戻り、''include/linux/pci_ids.h''の中身を先ほどの製造元IDとデバイスIDで検索します。
+# カーネルソースを検索し、ドライバ内でこれらの値が使われている場所を見つけます。製造元IDとデバイスIDが共に<code>struct pci_device_id</code>の定義内に存在するものを探します。
+# カーネルのMakefileの中で対応する<code>CONFIG_</code>値を探します。'''<code>find -type f -name Makefile | xargs grep DRIVER_NAME'''
+# カーネルコンフィグ内でこの値を検索し、該当するオプションを設定します。
+
+
+=== USBデバイス ===
+
+
 
 <references/>
 
