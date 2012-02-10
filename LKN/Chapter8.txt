@@ -38,7 +38,153 @@ USBストレージデバイスは''lsusb''で確認できます。以下コマ�
 
 ある種のUSBストレージデバイスは標準的なUSBの仕様に従わないため、別のモジュールが必要になります。その場合は該当するオプションをオンにしてください。
 
+
+=== IDEディスク ===
+
+IDEは最も一般的なタイプのディスクです。動作させるためにはIDEディスクコントローラが必要です。システムにIDEディスクが存在するか確認するには、''lspci''を使います。
+
+ $ <userinput>/usr/sbin/lspci | grep IDE</userinput>
+ 00:1f.1 IDE interface: Intel Corporation 82801EB/ER (ICH5/ICH5R) IDE
+ Controller (rev 02)
+ 00:1f.2 IDE interface: Intel Corporation 82801EB (ICH5) SATA Controller (rev
+ 02)
+
+全く同じ出力は出ないと思いますが、大事なのはIDEコントローラが表示されることです。SATAコントローラしか表示されない場合は、次の節を参照してください。
+
+有効にするには
+
+1. PCIサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+2. IDEサブシステムとIDEサポートを有効にします。
+ Device Drivers
+     [*] ATA/ATAPI/MFM/RLL support
+     [*]   Enhanced IDE/MFM/RLL disk/cdrom/tape/floppy support
+3. ATAシステムでは、デバイス特定のIDEコントローラを有効にする必要があります。間違った種類を選んでしまった場合のために、念のため「Generic」コントローラを有効にします。
+ Device Drivers
+     ATA/ATAPI/MFM/RLL support
+         [*]     generic/default IDE chipset support
+4. それぞれのPCI IDEコントローラを有効にします。
+ Device Drivers
+     ATA/ATAPI/MFM/RLL support
+         [*]     PCI IDE chipset support
+
+ここで長いサブメニューが開きますので、''lspci''で確認したデバイス名を選択して下さい。
+
+
+=== Serial ATA (SATA) ===
+
+SATAはIDEの後継となるディスクコントローラです。システムにSATAディスクコントローラがあるかどうかを確認するには
+
+ $ <userinput>/usr/sbin/lspci | grep SATA</userinput>
+ 00:1f.2 IDE interface: Intel Corporation 82801EB (ICH5) SATA Controller (rev
+ 02)
+
+同一の出力は出ないと思いますが、重要なのはSATAデバイスが表示されることです。
+
+SATAディスクは''libata''と呼ばれるカーネルライブラリを使用します。このライブラリはブロックレイヤとのやりとりにSCSIレイヤを使用しますので、いくつかのオプションを有効にする必要があります。
+
+1. PCIサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+2. SCSIサブシステムを有効にします。
+ Device Drivers
+     SCSI Device Support
+         [*] SCSI Device Support
+3. SCSIの中で、SCSI disk support を有効にします。
+ Device Drivers
+     SCSI Device Support
+         [*] SCSI disk support
+4. SCSI low-level driversの下のSATAオプションを有効にします。
+ Device Drivers
+     SCSI Device Support
+         SCSI low-level drivers
+             [*] Serial ATA (SATA) support
+5. 同じセクションでデバイス個別のコントローラを有効にします。さきほどの''lspci''の出力内容を使います。たとえば、大抵のIntelマザーボードではPIIX/ICH SATAドライバです。
+ Device Drivers
+     SCSI Device Support
+         SCSI low-level drivers
+             [*] Serial ATA (SATA) support
+             [*]   Intel PIIX/ICH SATA support
+
+
+=== CD-Rの書き込み ===
+
+LinuxでのCD書き込みは非常にシンプルです。カーネルがCD-ROMを読めれば、書きこむこともできます。IDEとSATA/SCSIで方法は異なります。
+
+==== IDE CD-ROMドライブ ===
+
+IDEのCD-ROMドライブはメインのIDEディスクドライブと同じコントローラを使います。上記「IDEディスク」の節の通りにIDEコントローラが有効にされていることを確認してください。そこまでできれば、もうひとつだけオプションを追加します。
+
+ Device Drivers
+     [*] ATA/ATAPI/MFM/RLL support
+     [*]   Enhanced IDE/MFM/RLL disk/cdrom/tape/floppy support
+     [M]     Include IDE/ATAPI CDROM support
+
+==== SCSIおよびSATA CD-ROMドライブ ===
+
+SATAとSCSIのCD-ROMドライブはメインのディスクと同じコントローラを使います。上記の手順に従ってSCSIおよびSATAのコントローラが有効になっていることを確認してください。あとは以下のオプションを追加するだけです。
+
+ Device Drivers
+     SCSI Device Support
+         [*] SCSI CDROM support
+
+
+== デバイス ==
+
+Linuxは様々なデバイスに対応しています（ほかのどのOSよりも対応デバイスの数は多いです）。以下ではよくあるデバイスについて解説します。
+
+=== USB ===
+
+LinuxはさまざまなUSBデバイスに対応しています。USBを有効にするには、まずUSBコントローラを有効にします。
+
+マシンにUSBコントローラがあるかどうかと、その種類については、次のコマンドで確認できます。
+
+ $ <userinput>/usr/sbin/lspci | grep USB</userinput>
+ 00:1d.0 USB Controller: Intel Corporation 82801EB/ER (ICH5/ICH5R) USB UHCI
+ Controller #1 (rev 02)
+ 00:1d.1 USB Controller: Intel Corporation 82801EB/ER (ICH5/ICH5R) USB UHCI
+ Controller #2 (rev 02)
+ 00:1d.2 USB Controller: Intel Corporation 82801EB/ER (ICH5/ICH5R) USB UHCI
+ Controller #3 (rev 02)
+ 00:1d.3 USB Controller: Intel Corporation 82801EB/ER (ICH5/ICH5R) USB UHCI
+ Controller #4 (rev 02)
+ 00:1d.7 USB Controller: Intel Corporation 82801EB/ER (ICH5/ICH5R) USB2 EHCI
+ Controller (rev 02)
+
+全く同じ出力は出ないと思いますが、大事なのはUSBコントローラが表示されることです。
+
+1. PCIサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+2. USBサポートを有効にします。
+ Device Drivers
+     USB Support
+         [M] Support for Host-side USB
+3. 各種USBホストコントローラを有効にします（どれが正しいか分からない場合は全部有効にします）。
+ Device Drivers
+     USB Support
+     ---   USB Host Controller Drivers
+     [M]   EHCI HCD (USB 2.0) support
+     [M]   OHCI HCD support
+     [M]   UHCI HCD (most Intel and VIA) support
+4. それぞれのUSBデバイスを有効にします。大半はこのセクションにあります。
+ Device Drivers
+     USB Support
+USBビデオやDVB・サウンドは別のセクションにあるかもしれません。たとえばUSBサウンドドライバはSoundメニューにあります。
+ Device drivers
+     Sound
+         [*] Sound card support
+             [*] Advanced Linux Sound Architecture
+                 USB Devices
+                     [M] USB Audio/MIDI driver
+USBストレージデバイスを利用したい場合は上記「USBストレージ」の項を参照してください。
+
+
+=== IEEE1394 (FireWire) ===
+
 userinputを置換
+
 <references/>
 
 {{Nav
