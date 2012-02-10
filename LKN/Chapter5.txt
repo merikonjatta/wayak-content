@@ -1,0 +1,17 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第5章: インストールとブート}}
+{{Nav
+|prev=LKN/Chapter4
+|next=LKN/Chapter6
+}}
+
+= 第5章: インストールとブート =
+
+ 
+
+<references/>
+
+{{Nav
+|prev=LKN/Chapter4
+|next=LKN/Chapter6
+}}
