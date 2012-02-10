@@ -1,0 +1,47 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第8章: 設定レシピ集}}
+{{Nav
+|prev=LKN/Chapter7
+|next=LKN/Chapter9
+}}
+
+= 第8章: 設定レシピ集 =
+
+前の章でカーネルのカスタマイズの基本的な流れを解説しました。この章ではそれを念頭に置いた上で、よくあるカスタマイズを具体的な手順とともに紹介します。
+
+
+== ディスク ==
+
+Linuxカーネルは様々なディスクタイプをサポートしています。ここでは各種ディスクコントローラに対応させる方法を紹介します。
+
+=== USBストレージ ===
+
+USBストレージ（フラッシュドライブや外部USBディスクとも呼ばれる）を使うには、まずUSBサポートが動作している必要があります。これについては「USB」の節を参照してください。
+
+USBストレージデバイスは''lsusb''で確認できます。以下コマンドでこのような出力が出れば、デバイスは認識されています。
+ $ <userinput>/usr/sbin/lsusb -v | grep Storage</userinput>
+       bInterfaceClass         8 Mass Storage
+有効にするには
+
+# USBストレージは、実際にはUSB接続を利用するUSB SCSIデバイスです。まずSCSIを有効にします。
+ Device Drivers
+     SCSI Device Support
+         [*] SCSI Device Support
+# 同じくSCSIの中で、「SCSI disk support」をオンにします。
+ Device Drivers
+     SCSI Device Support
+         [*] SCSI disk support
+# USBストレージサポートをオンにします。
+ Device Drivers
+    USB Support
+    [M] USB Mass Storage support
+
+ある種のUSBストレージデバイスは標準的なUSBの仕様に従わないため、別のモジュールが必要になります。その場合は該当するオプションをオンにしてください。
+
+userinputを置換
+<references/>
+
+{{Nav
+|prev=LKN/Chapter7
+|next=LKN/Chapter9
+}}
