@@ -372,13 +372,271 @@ PCI IDが最もみつかりやすいのは''include/linux/pci_ids.h''ファイ�
 # ''vendor''と''device''ファイルの内容をメモします。
 # カーネルソースの場所に戻り、''include/linux/pci_ids.h''の中身を先ほどの製造元IDとデバイスIDで検索します。
 # カーネルソースを検索し、ドライバ内でこれらの値が使われている場所を見つけます。製造元IDとデバイスIDが共に<code>struct pci_device_id</code>の定義内に存在するものを探します。
-# カーネルのMakefileの中で対応する<code>CONFIG_</code>値を探します。'''<code>find -type f -name Makefile | xargs grep DRIVER_NAME'''
+# カーネルのMakefileの中で対応する<code>CONFIG_</code>値を探します。'''<code>find -type f -name Makefile | xargs grep DRIVER_NAME</code>'''
 # カーネルコンフィグ内でこの値を検索し、該当するオプションを設定します。
 
 
 === USBデバイス ===
 
+USBデバイスのドライバを探す手順は上述のPCIデバイスのそれとあまり変わりませんが、バスIDを探す部分が異なります。
 
+例として、あるUSBワイヤレスデバイスのドライバを探すことにしましょう。PCIの場合と同じく、あなたの状況とは細かい部分が異なると思いますが、手順は同じです。
+
+まずはバスIDを探す必要があります。これには、''usbutils''パッケージに含まれる''lsusb''ツールを使います。
+
+''lsusb''は接続されている全USBデバイスのリストを出力します。まずは全部のデバイスを見てみましょう。
+
+ $ '''/usr/sbin/lsusb'''
+ Bus 002 Device 003: ID 045e:0023 Microsoft Corp. Trackball Optical
+ Bus 002 Device 001: ID 0000:0000
+ Bus 005 Device 003: ID 0409:0058 NEC Corp. HighSpeed Hub
+ Bus 005 Device 001: ID 0000:0000
+ Bus 004 Device 003: ID 157e:300d
+ Bus 004 Device 002: ID 045e:001c Microsoft Corp.
+ Bus 004 Device 001: ID 0000:0000
+ Bus 003 Device 001: ID 0000:0000
+ Bus 001 Device 001: ID 0000:0000
+
+バスIDが<code>0000:0000</code>になっているものはUSBホストコントローラで、バス自体をコントロールするものですので無視して構いません。これらを除外すると
+
+ $ '''/usr/sbin/lsusb | grep -v 0000:0000'''
+ Bus 002 Device 003: ID 045e:0023 Microsoft Corp. Trackball Optical
+ Bus 005 Device 003: ID 0409:0058 NEC Corp. HighSpeed Hub
+ Bus 004 Device 003: ID 157e:300d
+ Bus 004 Device 002: ID 045e:001c Microsoft Corp.
+
+USBはホットプラグが可能ですので、目的のUSBデバイスを一旦抜いてしまいます。もう一度''lsusb''を行うと
+
+ $ '''/usr/sbin/lsusb | grep -v 0000:0000'''
+ Bus 002 Device 003: ID 045e:0023 Microsoft Corp. Trackball Optical
+ Bus 005 Device 003: ID 0409:0058 NEC Corp. HighSpeed Hub
+ Bus 004 Device 002: ID 045e:001c Microsoft Corp.
+
+3つ目にあったデバイスがなくなっていますので、
+ Bus 004 Device 003: ID 157e:300d
+が目的のデバイスだと分かります。もう一度挿しなおして''lsusb''を行うと、デバイス番号が変わっていることに気づきます。
+
+ $ '''/usr/sbin/lsusb | grep 157e'''
+ Bus 004 Device 004: ID 157e:300d
+
+USBデバイス番号は抜き差しするたびに変わるのです。しかし、製造元IDとデバイスIDは変化していません。<code>:</code>でむすばれた2つの4桁の数字がそれです。ここでは製造元IDが<code>157e</code>でデバイスIDが<code>300d</code>です。これらはどこかにメモしておいてください。
+
+PCIと同じく、カーネルソースコードを検索します。残念ながらPCIのように一つのファイルがあらゆるUSB製造元IDを網羅しているわけではありませんので、ソース全体を検索しなければいけません。
+
+ $ '''grep -i -R  -l 157e drivers/*'''
+ drivers/atm/pca200e.data
+ drivers/atm/pca200e_ecd.data
+ drivers/atm/sba200e_ecd.data
+ drivers/net/wireless/zd1211rw/zd_usb.c
+ drivers/scsi/ql1040_fw.h
+ drivers/scsi/ql1280_fw.h
+ drivers/scsi/qlogicpti_asm.c
+
+ATMやSCSIデバイスでないことはわかっていますので、これらは除外できます。残ったのは''drivers/ net/wireless/zd1211rw/zd_usb.c''ファイルです。この中で<code>157e</code>という文字列を探すと、以下のようなセクションに登場します。
+
+ static struct usb_device_id 
+ <indexterm id="IDX-CHP-7-0240"><primary>struct usb_device_id</primary></indexterm> 
+  usb_ids[] = {
+         /* ZD1211 */
+         { USB_DEVICE(0x0ace, 0x1211), .driver_info = DEVICE_ZD1211 },
+         { USB_DEVICE(0x07b8, 0x6001), .driver_info = DEVICE_ZD1211 },
+         { USB_DEVICE(0x126f, 0xa006), .driver_info = DEVICE_ZD1211 },
+         { USB_DEVICE(0x6891, 0xa727), .driver_info = DEVICE_ZD1211 },
+         { USB_DEVICE(0x0df6, 0x9071), .driver_info = DEVICE_ZD1211 },
+         { USB_DEVICE(0x157e, 0x300b), .driver_info = DEVICE_ZD1211 },
+         /* ZD1211B */
+         { USB_DEVICE(0x0ace, 0x1215), .driver_info = DEVICE_ZD1211B },
+         { USB_DEVICE(0x157e, 0x300d), .driver_info = DEVICE_ZD1211B },
+         {}
+ };
+
+PCIの時と同じく、ドライバは対応するデバイスの一覧をカーネルに対して提示しています。このように<code>struct usb_device_id</code>の配列を使用します。
+ { USB_DEVICE(0x157e, 0x300b), .driver_info = DEVICE_ZD1211 },
+という行で、目的のデバイスをサポートしていることが分かります。
+
+ここまでくれば、あとは前述のようにカーネルの''Makefile''の中からオプションを検索すればOKです。
+
+まとめると、USBデバイスのドライバを探す手順は以下のようになります。
+
+# デバイスを抜き差ししながら''lsusb''を使って製造元IDとデバイスIDを見つけます。
+# カーネルソースツリーを製造元IDとデバイスIDで検索します。2つの値が<code>struct usb_device_id</code>に同時に登場するものを見つけます。
+# カーネルのMakefileの中で対応する<code>CONFIG_</code>値を探します。'''<code>find -type f -name Makefile | xargs grep DRIVER_NAME</code>'''
+# カーネルコンフィグ内でこの値を検索し、該当するオプションを設定します。
+
+
+=== Rootファイルシステム ===
+
+システムの主要な部分はrootファイルシステムからブートします。ここにはディストリビューションとともに初期起動するプログラムと、そのマシン用のシステムコンフィギュレーションが含まれます。要は重要なファイルシステムであり、カーネルのブート時にカーネルがここを見られる状態でないと正常に動作しないということです。
+
+新しく設定したカーネルがこのようなエラーを吐いてクラッシュすることがあります。
+
+ VFS: Cannot open root device hda2 (03:02)
+ Please append a correct "root=" boot option
+ Kernal panic: VFS: Unable to mount root fs on 03:02
+
+これはrootファイルシステムが見つからないということです。ブートにRAMディスクを使わないなら、rootパーティション用のファイルシステムとそのディスクコントローラを両方、カーネルに組み込んでしまうのがお勧めです（モジュールとしてではなく）。RAMディスクを使うならモジュールでも構わないでしょう。
+
+{{LKN/Tip | ブート時にRAMディスクを使っているかどうか、どうやって確認するかですが、5章で、ディストリビューションのインストールスクリプトを使うか自分でインストールするかを選びました。インストールスクリプトを使ったなら、恐らくRAMディスクも使っています。自分でインストールしたなら、恐らくRAMディスクを使っていません。}}
+
+以下の節ではカーネルにrootファイルシステムを見つけさせる方法を解説します。
+
+=== ファイルシステムの種類 ===
+
+まずはrootパーティションのファイルシステムの種類を判別します。''mount''コマンドを使います。
+
+ $ '''mount | grep "/"'''
+ /dev/sda2 on / type ext3 (rw,noatime)
+
+<code>type</code>のあとに出ているのがファイルシステムの種類です。ここでは<code>ext3</code>となっています。カーネルコンフィギュレーションを見て、このファイルシステムタイプが有効になっていることを確認してください（{{Link|LKN/Chapter8}}を参照）。
+
+=== ディスクコントローラ ===
+
+先ほどの出力の冒頭に、rootファイルシステムがマウントされているブロックデバイスが出ています。ここでは<code>/dev/sda2</code>です。ファイルシステムが有効になっているのは確認できましたが、なおかつこのブロックデバイスが正常に動作していることを確認しなければいけません。再び''sysfs''を覗きます。
+
+ブロックデバイスは''/sys/block''か''/sys/class/block''にあります（カーネルのバージョンによって異なります）。ブロックデバイスはそれぞれツリーになっており、パーティションが子要素になっています。
+
+ $ '''tree -d /sys/block/ | egrep "hd|sd"'''
+ |-- hdc
+ |-- hdd
+ &grave;-- sda
+     |-- sda1
+     |-- sda2
+     |-- sda3
+
+''mount''の結果より、<code>sda2</code>が正常に設定されていることを確認せねばなりません。これはパーティションであるため（ブロックデバイスには番号がありませんがパーティションには番号がついています）、<code>sda</code>ブロックデバイスごと設定します。ブロックデバイスなしではそのパーティションにアクセスすることはできないからです。
+
+この<code>sda</code>ブロックデバイスは、''sysfs''内では上で述べたネットワークデバイスと同じように表現されています。デバイスの該当ディレクトリ内に<code>device</code>というシンボリックリンクがあり、このブロックデバイスをコントロールする論理デバイスを指しています。
+
+ $ '''ls -l /sys/block/sda'''
+   ...
+ device -&gt; ''../../devices/pci0000:00/0000:00:1f.2/host0/target0:0:0/0:0:0:0''
+   ...
+
+ここから''sysfs''内のリンクをたどっていき、ドライバを探し当てます。
+
+ $ '''ls -l /sys/devices/pci0000:00/0000:00:1f.2/host0/target0:0:0/0:0:0:0'''
+   ...
+ driver -&gt; ''../../../../../../bus/scsi/drivers/sd''
+   ...
+
+これでSCSIディスクコントローラドライバがこのデバイスを動かしていることが分かりました。そこでカーネルにSCSIディスクのサポートを組み込みます。
+
+さらにリンクを辿ってドライバを探します。
+
+ $ '''ls -l /sys/devices/pci0000:00/0000:00:1f.2/host0/target0:0:0'''
+   ...
+
+このディレクトリには<code>driver</code>というリンクが無いので、もうひとつ上に上がります。
+
+ $ '''ls -l /sys/devices/pci0000:00/0000:00:1f.2/host0'''
+   ...
+
+ここにもないので、さらに上に上がります。
+
+ $ '''ls -l /sys/devices/pci0000:00/0000:00:1f.2'''
+   ...
+ driver -&gt; ''../../../bus/pci/drivers/ata_piix''
+   ...
+
+ありました。このディスクコントローラを組み込めばいいはずです。
+
+最終的に、このrootファイルシステムのためには<code>ext3</code>、<code>sd</code>そして<code>ata_piix</code>ドライバをカーネルコンフィギュレーションで有効にすることで、正常にブートさせることが可能です。
+
+
+=== ヘルパースクリプト ===
+
+この章のはじめの方で述べたとおり、''sysfs''内のファイルやディレクトリの配置はリリースごとに多少異なります。ここで紹介するスクリプトを使えば、任意のデバイスに関して必要なカーネルドライバとモジュール名を調べることができます。''sysfs''担当のカーネル開発者の協力を得て作成されていますので、2.6系の全てのカーネルで動作するはずです。
+
+例えば上の<code>sda</code>ブロックデバイスの場合だと、
+
+ $ '''get-driver.sh sda'''
+ looking at sysfs device: /sys/devices/pci0000:00/0000:00:1f.2/host0/
+ target0:0:0/0:0:0:0
+ found driver: sd
+ found driver: ata_piix
+
+USB/シリアルデバイスのような複雑なケースでも、
+
+ $ '''get-driver.sh ttyUSB0'''
+ looking at sysfs device: /sys/devices/pci0000:00/0000:00:1d.3/usb4/4-2/4-2.3/
+ 4-2.3:1.0/ttyUSB0
+ found driver: pl2303 from module: pl2303
+ found driver: pl2303 from module: pl2303
+ found driver: usb from module: usbcore
+ found driver: usb from module: usbcore
+ found driver: usb from module: usbcore
+ found driver: uhci_hcd from module: uhci_hcd
+
+このスクリプトは本書のウェブサイトからダウンロードできます。
+
+
+<pre>
+#!/bin/sh
+#
+# Find all modules and drivers for a given class device.
+#
+if [ $# != "1" ] ; then
+    echo
+    echo "Script to display the drivers and modules for a specified sysfs class
+device"
+    echo "usage: $0 &lt;CLASS_NAME&gt;"
+    echo
+    echo "example usage:"
+    echo "      $0 sda"
+    echo "Will show all drivers and modules for the sda block device."
+    echo
+    exit 1
+fi
+DEV=$1
+if test -e "$1"; then
+    DEVPATH=$1
+else
+    # find sysfs device directory for device
+    DEVPATH=$(find /sys/class -name "$1" | head -1)
+    test -z "$DEVPATH" &amp;&amp; DEVPATH=$(find /sys/block -name "$1" | head -1)
+    test -z "$DEVPATH" &amp;&amp; DEVPATH=$(find /sys/bus -name "$1" | head -1)
+    if ! test -e "$DEVPATH"; then
+        echo "no device found"
+        exit 1
+    fi
+fi
+echo "looking at sysfs device: $DEVPATH"
+if test -L "$DEVPATH"; then
+    # resolve class device link to device directory
+    DEVPATH=$(readlink -f $DEVPATH)
+    echo "resolve link to: $DEVPATH"
+fi
+if test -d "$DEVPATH"; then
+    # resolve old-style "device" link to the parent device
+    PARENT="$DEVPATH";
+    while test "$PARENT" != "/"; do
+        if test -L "$PARENT/device"; then
+            DEVPATH=$(readlink -f $PARENT/device)
+            echo "follow 'device' link to parent: $DEVPATH"
+            break
+        fi
+        PARENT=$(dirname $PARENT)
+    done
+fi
+while test "$DEVPATH" != "/"; do
+    DRIVERPATH=
+    DRIVER=
+    MODULEPATH=
+    MODULE=
+    if test -e $DEVPATH/driver; then
+        DRIVERPATH=$(readlink -f $DEVPATH/driver)
+        DRIVER=$(basename $DRIVERPATH)
+        echo -n "found driver: $DRIVER"
+        if test -e $DRIVERPATH/module; then
+            MODULEPATH=$(readlink -f $DRIVERPATH/module)
+            MODULE=$(basename $MODULEPATH)
+            echo -n " from module: $MODULE"
+        fi
+        echo
+    fi
+    DEVPATH=$(dirname $DEVPATH)
+done
+</pre>
 
 <references/>
 
