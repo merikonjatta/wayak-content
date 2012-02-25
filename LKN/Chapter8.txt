@@ -19,7 +19,7 @@ Linuxカーネルは様々なディスクタイプをサポートしています
 USBストレージ（フラッシュドライブや外部USBディスクとも呼ばれる）を使うには、まずUSBサポートが動作している必要があります。これについては「USB」の節を参照してください。
 
 USBストレージデバイスは''lsusb''で確認できます。以下コマンドでこのような出力が出れば、デバイスは認識されています。
- $ <userinput>/usr/sbin/lsusb -v | grep Storage</userinput>
+ $ '''/usr/sbin/lsusb -v | grep Storage'''
        bInterfaceClass         8 Mass Storage
 有効にするには
 
@@ -43,7 +43,7 @@ USBストレージデバイスは''lsusb''で確認できます。以下コマ�
 
 IDEは最も一般的なタイプのディスクです。動作させるためにはIDEディスクコントローラが必要です。システムにIDEディスクが存在するか確認するには、''lspci''を使います。
 
- $ <userinput>/usr/sbin/lspci | grep IDE</userinput>
+ $ '''/usr/sbin/lspci | grep IDE'''
  00:1f.1 IDE interface: Intel Corporation 82801EB/ER (ICH5/ICH5R) IDE
  Controller (rev 02)
  00:1f.2 IDE interface: Intel Corporation 82801EB (ICH5) SATA Controller (rev
@@ -76,7 +76,7 @@ IDEは最も一般的なタイプのディスクです。動作させるため�
 
 SATAはIDEの後継となるディスクコントローラです。システムにSATAディスクコントローラがあるかどうかを確認するには
 
- $ <userinput>/usr/sbin/lspci | grep SATA</userinput>
+ $ '''/usr/sbin/lspci | grep SATA'''
  00:1f.2 IDE interface: Intel Corporation 82801EB (ICH5) SATA Controller (rev
  02)
 
@@ -140,7 +140,7 @@ LinuxはさまざまなUSBデバイスに対応しています。USBを有効に
 
 マシンにUSBコントローラがあるかどうかと、その種類については、次のコマンドで確認できます。
 
- $ <userinput>/usr/sbin/lspci | grep USB</userinput>
+ $ '''/usr/sbin/lspci | grep USB'''
  00:1d.0 USB Controller: Intel Corporation 82801EB/ER (ICH5/ICH5R) USB UHCI
  Controller #1 (rev 02)
  00:1d.1 USB Controller: Intel Corporation 82801EB/ER (ICH5/ICH5R) USB UHCI
@@ -181,11 +181,663 @@ USBビデオやDVB・サウンドは別のセクションにあるかもしれ�
 USBストレージデバイスを利用したい場合は上記「USBストレージ」の項を参照してください。
 
 
-=== IEEE1394 (FireWire) ===
+=== IEEE 1394 (FireWire) ===
 
-userinputを置換
+IEEE 1394はFireWireとも呼ばれ、Appleによって公表された外部デバイス用の高速バスです。
+
+マシンにFireWireコントローラが存在するかどうかを調べるには、
+
+ $ '''/usr/sbin/lspci | grep FireWire'''
+ 06:0c.0 FireWire (IEEE 1394): Texas Instruments TSB43AB22/A IEEE-1394a-2000
+ Controller (PHY/Link)
+ 06:0d.2 FireWire (IEEE 1394): Creative Labs SB Audigy FireWire Port (rev 04)
+
+全く同じ出力は出ないと思いますが、大事なのはコントローラが表示されることです。
+
+1. PCIサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+2. IEEE 1394サポートを有効にします。
+ Device Drivers
+     IEEE 1394 (FireWire) support
+         [*] IEEE 1394 (FireWire) support
+3. マシン固有のFireWireのホストコントローラを有効にします。
+ Device Drivers
+     IEEE 1394 (FireWire) support
+         [*] IEEE 1394 (FireWire) support
+         ---   Device Drivers
+         [M]   Texas Instruments PCILynx support
+         [M]   OHCI-1394 support
+4. 最後に、使いたいFireWireデバイスを有効にします。
+ Device Drivers
+     IEEE 1394 (FireWire) support
+         [*] IEEE 1394 (FireWire) support
+         ---   Protocol Drivers
+         [M]   OHCI-1394 Video support
+         [M]   SBP-2 support (Harddisks etc.)
+         [ ]     Enable Phys DMA support for SBP2 (Debug)
+         [M]   Ethernet over 1394
+         [M]   OHCI-DV I/O support
+         [M]   Raw IEEE1394 I/O support
+ 
+
+=== PCIホットプラグ ===
+
+ExpressCardやラップトップドックの普及と共にPCIホットプラグも一般的に使われるようになってきました。
+
+マシンにExpressCardコントローラが存在するかどうか確認するには、ハードウェアを見てExpressCardが挿せるかどうかをチェックしてください。
+
+1. PCIサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+2. PCIホットプラグサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+     PCI Hotplug Support
+         [M] Support for PCI Hotplug (EXPERIMENTAL)
+3. PCIホットプラグコントローラは多種存在しますが、大抵のラップトップとExpressCardサポートのためにはACPIコントローラが使えます。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+     PCI Hotplug Support
+         [M] Support for PCI Hotplug (EXPERIMENTAL)
+         [M]   ACPI PCI Hotplug driver
+4. PCI Expressコントローラを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+     [*] PCI Express Support
+     [M]   PCI Express Hotplug driver
+
+
+==== PCMCIA/CardBus ====
+
+大半のラップトップはPCMCIAとCardBusに対応していますが、最近のラップトップは代わりにExpressCardに対応するようになっています。
+
+マシンにPCMCIAコントローラが存在するかどうかを調べるには、ハードウェアを見てPCMCIAカードが挿せるかどうかをチェックしてください。
+
+1. PCIサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     [*] PCI Support
+2. PCCARDサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     PCCARD (PCMCIA/CardBus) support
+         [M] PCCard (PCMCIA/CardBus) support
+3. できるだけ多くのデバイスに対応できるよう、PCMCIAとCardBusを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     PCCARD (PCMCIA/CardBus) support
+         [M] PCCard (PCMCIA/CardBus) support
+         [M]   16-bit PCMCIA support
+         [*]   32-bit CardBus support
+4. カードブリッジのタイプを有効にします。最も一般的なのは「Yenta風」コントローラです。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+     PCCARD (PCMCIA/CardBus) support
+         [M] PCCard (PCMCIA/CardBus) support
+         [M]   CardBus yenta-compatible bridge support
+         [ ]   Cirrus PD6729 compatible bridge support
+         [ ]   i82092 compatible bridge support
+         [ ]   i82365 compatible bridge support
+         [ ]   Databook TCIC host bridge support
+
+
+=== サウンド (ALSA) ===
+
+ALSA (Advanced Linux Sound Architecture)は現在のLinuxカーネルにおけるサウンドシステムです。従来のシステム（OSS）はもう使われず、ほとんどの古いドライバはカーネルソースから削除されています。
+
+システムに存在するサウンドコントローラの種類を調べるには
+
+同一の出力は出ないと思いますが、大事なのはコントローラが表示されることです。
+
+1. サウンドサポートを有効にします。
+ Device Drivers
+     Sound
+         [M] Sound Card Support
+2. ALSAを有効にします。
+ Device Drivers
+     Sound
+         [M] Sound Card Support
+             [M] Advanced Linux Sound Architecture
+3. ALSAにはさまざまなオプションがあり、従来のOSSプロトコルのサポートなどが選べます。古いアプリケーションを使うなら関連オプションをオンにします。
+ Device Drivers
+     Sound
+         [M] Sound Card Support
+             [M] Advanced Linux Sound Architecture
+             [M]   OSS Mixer API
+             [M]   OSS PCM (digital audio) API
+             [ ]     OSS PCM (digital audio) API - Include plugin system
+4. マシンに固有のサウンドデバイスを有効にします。PCIサウンドカードはPCIサブメニューの中にあります。
+ Device Drivers
+     Sound
+         [M] Sound Card Support
+             [M] Advanced Linux Sound Architecture
+                 PCI Devices
+
+
+== CPU ==
+
+あなたのCPUとハードウェアに合わせて可能な限り高速にLinuxカーネルを動作させたいなら、いくつかのオプションを有効にすることでパフォーマンスを搾り出す事ができます。この節ではCPU固有のオプションを紹介します。
+
+=== CPUの種類 ===
+
+カーネルのCPU関連オプションは多岐に渡ります。ここでは最も重要なのは使用するCPUのタイプを特定することです。現在使っているCPUの種類を調べるには、
+
+ $ '''cat /proc/cpuinfo  | grep "model name"'''
+ model name      : Intel(R) Xeon(TM) CPU 3.20GHz
+
+同一の出力は出ないと思いますが、大事なのはCPUのモデル名が表示されることです。
+
+1. プロセッサのサブアーキテクチャを選択します。
+ Processor type and features
+     Subarchitecture Type
+         (X) PC-compatible
+         ( ) AMD Elan
+         ( ) Voyager (NCR)
+         ( ) NUMAQ (IBM/Sequent)
+         ( ) Summit/EXA (IBM x440)
+         ( ) Support for other sub-arch SMP systems with more than 8 CPUs
+         ( ) SGI 320/540 (Visual Workstation)
+         ( ) Generic architecture (Summit, bigsmp, ES7000, default)
+         ( ) Support for Unisys ES7000 IA32 series
+このリストに含まれない場合は<code>PC-compatible</code>を選んでおいてください。リストに出ている全てのアーキテクチャで動作するカーネルにしたければ<code>Generic architecture</code>を選択します。<code>Symmetric multi-processing support</code>オプションをオフにしている場合はリストの内容が多少違っているかも知れません。
+
+2. プロセッサのファミリータイプを選択します。このサブメニューはステップ1で<code>PC-compatible</code>を選んだ時だけ表示されます。
+ Processor type and features
+     Processor family
+         ( ) 386
+         ( ) 486
+         ( ) 586/K5/5x86/6x86/6x86MX
+         ( ) Pentium-Classic
+         ( ) Pentium-MMX
+         ( ) Pentium-Pro
+         ( ) Pentium-II/Celeron(pre-Coppermine)
+         ( ) Pentium-III/Celeron(Coppermine)/Pentium-III Xeon
+         ( ) Pentium M
+         (X) Pentium-4/Celeron(P4-based)/Pentium-4 M/Xeon
+         ( ) K6/K6-II/K6-III
+         ( ) Athlon/Duron/K7
+         ( ) Opteron/Athlon64/Hammer/K8
+         ( ) Crusoe
+         ( ) Efficeon
+         ( ) Winchip-C6
+         ( ) Winchip-2
+         ( ) Winchip-2A/Winchip-3
+         ( ) GeodeGX1
+         ( ) Geode GX/LX
+         ( ) CyrixIII/VIA-C3
+         ( ) VIA C3-2 (Nehemiah)
+         ( ) Generic x86 support
+
+このオプションについては{{Link|LKN/Chapter11}}のM386の項にてプロセッサタイプの選び方等を解説していますので、そちらを参照してください。
+
+
+=== SMP ===
+
+マシンにCPUが複数搭載されていたり、Hyperthreading対応やデュアルコアモデルである場合、マルチプロセッサオプションを有効にすることで性能を発揮させることができます。このオプションを有効にしないと複数コアの便益をまったく享受できません。
+
+マルチプロセッシングを有効にするには
+ Processor type and features
+     [*] Symmetric multi-processing support
+
+
+=== プリエンプション ===
+
+サーバとして動かすマシンはデスクトップ用マシンと必要な条件が大きく異なります。こういった目的別のワークロードに対応するため、カーネルには複数の「プリエンプション」のモードが用意されています。プリエンプションとはカーネルが自身の作業を中断する機能のことで、特定のタスクを優先するために使われます。
+
+プリエンプションのモードを変更するには
+ Processor type and features
+     Preemption Model
+         (X) No Forced Preemption (Server)
+     ( ) Voluntary Kernel Preemption (Desktop)
+     ( ) Preemptible Kernel (Low-Latency Desktop)
+
+優先度の高いタスクにより高い応答性を求めるなら、カーネルの内部的なロックに対して割り込みを許可することができます。
+ processor type and features
+     [*] preempt the big kernel lock
+このオプションは<code>Preemptive Kernel</code>か<code>Symmetric multi-processing support</code>オプションを有効にしている時のみ選択できます。
+
+
+=== サスペンド ===
+
+Linuxカーネルにはサスペンド機能があり、メモリの状態をディスクに格納しておくことで電源を切断して後に最接続すると以前の状態を復元することができます。ラップトップでLinuxを使うなら大変便利な機能です。
+
+サスペンドを有効にするには
+ Power management options (ACPI, APM)
+     [*] Software Suspend
+
+サスペンド時にイメージを保存する場所をカーネルが知っておかなくてはいけません。通常はカーネルスワップパーティションになります。場所を指定するには
+ Power management options (ACPI, APM)
+     (/dev/hda3) Default resume partition
+必ず正常に動作するパーティションを指定してください。また、データ用パーティションは避けてください。このコマンドで適切なパーティション名を調べられます。
+ $ '''/sbin/swapon -s | grep dev | cut -f 1 -d ' ''''
+ /dev/hda3
+オプションの指定と、カーネルのブートラインでのレジューム元指定にはこのコマンドの出力結果を使ってください。マシンがサスペンドした後、正常にレジュームさせるにはカーネルのコマンドラインに<code>resume=/dev/swappartition</code>引数を与えます。サスペンドの後レジュームせず通常起動したい場合はカーネルに<code>noresume</code>引数を与えればOKです。
+
+
+=== CPUオーバークロック/ダウンクロック ===
+
+大抵のCPUは内部クロックを変更して高速に動作させたりバッテリーを節約したりできます。Linuxはこれに対応しており、数種類のクロック変更ポリシー（Governor）が用意されています。選択したGovernorによってシステムの負荷などに合わせていかにCPUクロックを変動させるかが変わります。
+
+1. 周波数スケーリングを有効にします。
+ Power management options (ACPI, APM)
+     [*] CPU Frequency scaling
+2. 使いたいGovernorを選択します。
+ Power management options (ACPI, APM)
+     [*] CPU Frequency scaling
+     [*]   'performance' governor
+     [*]   'powersave' governor
+     [*]   'userspace' governor for userspace frequency scaling
+     [*]   'ondemand' cpufreq policy governor
+     [*]   'conservative' cpufreq governor
+それぞれの選択肢の詳細については{{Link|LKN/Chapter11}}のCPU_FREQの項を参照してください。
+3. ブート時に使うGovernorを選択します。
+ Power management options (ACPI, APM)
+     [*] CPU Frequency scaling
+           Default CPUFreq governor (performance)
+4. プロセッサの種類を指定します。詳しくは前述の「CPUの種類」の項を参照してください。
+ Power management options (ACPI, APM)
+     [*] CPU Frequency scaling
+     ---   CPUFreq processor drivers
+     [ ]   ACPI Processor P-States driver
+     [ ]   AMD Mobile K6-2/K6-3 PowerNow!
+     [ ]   AMD Mobile Athlon/Duron PowerNow!
+     [ ]   AMD Opteron/Athlon64 PowerNow!
+     [ ]   Cyrix MediaGX/NatSemi Geode Suspend Modulation
+     [*]   Intel Enhanced SpeedStep
+     [*]     Use ACPI tables to decode valid frequency/voltage pairs
+     [*]     Built-in tables for Banias CPUs
+     [ ]   Intel Speedstep on ICH-M chipsets (ioport interface)
+     [ ]   Intel SpeedStep on 440BX/ZX/MX chipsets (SMI interface)
+     [ ]   Intel Pentium 4 clock modulation
+     [ ]   nVidia nForce2 FSB changing
+     [ ]   Transmeta LongRun
+
+
+=== メモリの種類 ===
+
+32bitのIntelマシンではLinuxは64GBまでのメモリにアクセスできますが、32bitプロセッサのアドレス空間は4GBしかありません。この制約を回避するため、Linuxは別のエリアにメモリを保持しておきそちらへ切り替える機能を持ちます。ただし、搭載するメモリがそれほど大きくない場合、カーネルに対応すべきメモリ容量を伝えておけばこれらの大きなエリアを扱う必要がなくなります。このオプションについてより詳しくは{{Link|LKN/Chapter11}}のHIGHMEMの項を参照してください。
+
+Linuxでは32bit Intelプロセッサ向けに3つのメモリモデルをサポートしています。
+* 1GB以下の物理メモリ
+* 1GB〜4GBの物理メモリ
+* 4GB以上の物理メモリ
+
+メモリの容量を指定するには
+ Processor type and features
+     High Memory Support
+         (X) off
+         ( ) 4GB
+         ( ) 64GB
+
+
+=== ACPI ===
+
+最近のIntelベースのシステムはACPIを必要とするものが増えています。ACPIはハードウェアアクセスのためにBIOSとOSが協働する仕組みで、ハードウェアを間接的に扱うことでOSレベルでの抽象化を目的としています。また、サスペンド・レジュームとCPU周波数、ファン回転数のコントロールもACPIの機能に含まれます。ラップトップでLinuxを使用するなら有効にしておくことをお勧めします。
+
+ACPIを有効にするには
+ Power management options (ACPI, APM)
+     ACPI (Advanced Configuration and Power Interface) Support
+         [*] ACPI Support
+ACPIデバイスをコントロールする「ACPIドライバ」は多数存在します。マシンに固有のものを有効にします。
+ Power management options (ACPI, APM)
+     ACPI (Advanced Configuration and Power Interface) Support
+         [*] ACPI Support
+         [*]   AC Adapter
+         [*]   Battery
+         [*]   Button
+         [*]   Video
+         [*]   Generic Hotkey (EXPERIMENTAL)
+         [*]   Fan
+         [*]   Processor
+         [*]     Thermal Zone
+         [ ]   ASUS/Medion Laptop Extras
+         [ ]   IBM ThinkPad Laptop Extras
+         [ ]   Toshiba Laptop Extras
+
+
+== ネットワーク ==
+
+今日のマシンの殆どはネットワーキングを必要とするでしょう。Linuxはあまたのネットワークオプションを用意しています。ここではその一分を紹介します。
+
+様々なドライバがありますが、まずはメインのネットワークオプションをオンにします。
+ Networking
+     [*] Networking support
+インターネット上の他のマシンと通信できるよう、TCP/IPオプションもONにしておくべきでしょう。
+ Networking
+     [*] Networking support
+           Networking options
+               [*] TCP/IP networking
+
+=== Netfilter ===
+
+Netfilterは、マシンが扱う全てのネットワークパケットを捜査したりフィルタリングしたりするフレームワークです。インターネットに接続するマシンにファイアウォールを設定したり、マシンをプロキシとして利用する際に使われます。Netfilterの詳細については{{Link|LKN/Chapter11}}のNETFILTERの節を参照してください。
+
+1. NetfilterをONにします。
+Networking
+     [*] Networking support
+           Networking options
+               [*] Network packet filtering (replaces ipchains)
+2. NetfilterのnetlinkインターフェースとXtablesを有効にしておくことをお勧めします。
+Networking
+     [*] Networking support
+           Networking options
+               [*] Network packet filtering (replaces ipchains)
+                     Core Netfilter Configuration
+                         [*] Netfilter netlink interface
+                         [*] Netfilter Xtables support (required for ip_tables)
+3. フィルタしたい各プロトコルを選択します。
+ Networking
+     [*] Networking support
+           Networking options
+               [*] Network packet filtering (replaces ipchains)
+                     IP: Netfilter Configuration
+                         [M] Connection tracking (required for masq/NAT)
+                         [ ]   Connection tracking flow accounting
+                         [ ]   Connection mark tracking support
+                         [ ]   Connection tracking events (EXPERIMENTAL)
+                         [ ]   SCTP protocol connection tracking support (EXPERIMENTAL)
+                         [M]   FTP protocol support
+                         [ ]   IRC protocol support
+                         [ ]   NetBIOS name service protocol support (EXPERIMENTAL)
+                         [M]   TFTP protocol support
+                         [ ]   Amanda backup protocol support
+                         [ ]   PPTP protocol support
+                         [ ]   H.323 protocol support (EXPERIMENTAL)
+
+=== ネットワークドライバ ===
+
+Linuxは様々なネットワークデバイスに対応しています。もっとも一般的なのはPCIのイーサネットデバイスでしょう。システムにPCIネットワークデバイスが存在するか、あればどんな種類かはこのコマンドで確認できます。
+ $ '''/usr/sbin/lspci | grep Ethernet'''
+ 03:0c.0 Ethernet controller: D-Link System Inc RTL8139 Ethernet (rev 10)
+ 03:0e.0 Ethernet controller: Intel Corporation 82545GM Gigabit Ethernet Controller
+ (rev 04)
+全く同じ出力は出ないと思いますが、PCIのイーサネットデバイスが存在するということが重要です。
+
+1. PCIサポートを有効にします。
+ Bus options (PCI, PCMCIA, EISA, MCA, ISA)
+ [*] PCI Support
+2. ネットワークデバイスサポートを有効にします。
+ Device Drivers
+     Network device support
+         [*] Network device support
+3. 次にハードウェア固有のデバイスドライバを見つけて有効にします。最近のハードウェアであればギガビットのセクションを見るとよいでしょう。
+ Device Drivers
+     Network device support
+         [*] Network device support
+             Ethernet (1000 Mbit)
+少し古いデバイスならば10Mビットあるいは100Mビットのセクションです。
+ Device Drivers
+     Network device support
+         [*] Network device support
+             Ethernet (10 or 100Mbit)
+この中からデバイス固有のドライバを見つけましょう。
+
+
+=== IrDA ===
+
+IrDAはラップトップやPDAでしばしば使われる、短距離通信のための赤外線プロトコルです。最近のマシンには代わりにBluetoothが搭載されるようになっていますので、これがあるのは少し古いマシンでしょう。Bluetoothについては後述します。
+
+1. IrDAはネットワークプロトコルですので、ネットワーキングのメニュー下にあります。
+ Networking
+     [*] Networking support
+     [*]   IrDA (infrared) subsystem support
+2. 通信相手のデバイス種別や利用するプログラムに応じて複数のIrDAプロトコルがありますので、必要なものを選びます。
+ Networking
+     [*] Networking support
+         --- IrDA (infrared) subsystem support
+         ---   IrDA protocols
+         [*]   IrLAN protocol (NEW)
+         [*]   IrCOMM protocol (NEW)
+         [*]   Ultra (connectionless) protocol (NEW)
+3. IrDAデバイスはPCI、USBあるいはシリアルなどいろいろな種類があります。IrDAのサブメニューの中から相応しいものを探しましょう。
+ Networking
+     [*] Networking support
+         --- IrDA (infrared) subsystem support
+               Infrared-port device drivers
+               --- SIR device drivers
+               [ ] IrTTY (uses Linux serial driver)
+               --- Dongle support
+               --- Old SIR device drivers
+               --- Old Serial dongle support
+               --- FIR device drivers
+               [ ] IrDA USB dongles
+               [ ] SigmaTel STIr4200 bridge (EXPERIMENTAL)
+               [ ] NSC PC87108/PC87338
+               [ ] Winbond W83977AF (IR)
+               [ ] Toshiba Type-O IR Port
+               [ ] SMSC IrCC (EXPERIMENTAL)
+               [ ] ALi M5123 FIR (EXPERIMENTAL)
+               [ ] VLSI 82C147 SIR/MIR/FIR (EXPERIMENTAL)
+               [ ] VIA VT8231/VT1211 SIR/MIR/FIR
+
+=== Bluetooth ===
+
+BluetoothはIrDAに代わるべく登場した無線短距離通信テクノロジーです。約10メートルほどの半径で通信でき、携帯電話などでよく利用されます。
+
+1. Bluetoothはネットワークプロトコルですので、ネットワーキングのメニューから選択します。
+ Networking
+     [*] Networking support
+     [*]   Bluetooth subsystem support
+2. Bluetoothには主に2つのプロトコルがありますが、これらは両方有効にしておくべきです。
+ Networking
+     [*] Networking support
+         --- Bluetooth subsystem support
+         [*]   L2CAP protocol support
+         [*]   SCO links support
+3. Bluetoothのデバイスドライバの種類はそれほど多くありません。これはほとんどのデバイスがBluetoothのガイドラインに則って設計されているからです。以下のリストのように選択しましょう。
+ Networking
+     [*] Networking support
+         --- Bluetooth subsystem support
+             Bluetooth device drivers
+                 [M] HCI USB driver
+                 [*]   SCO (voice) support
+                 [ ] HCI UART driver
+                 [M] HCI BCM203x USB driver
+                 [M] HCI BPA10x USB driver
+                 [ ] HCI BlueFRITZ! USB driver
+                 [ ] HCI DTL1 (PC Card) driver
+                 [ ] HCI BT3C (PC Card) driver
+                 [ ] HCI BlueCard (PC Card) driver
+                 [ ] HCI UART (PC Card) device driver
+                 [ ] HCI VHCI (Virtual HCI device) driver
+
+=== 無線LAN ===
+
+無線LANは非常にポピュラーになっており、ほとんどのラップトップにはワイヤレスネットワークデバイスが初めから搭載されています。Linuxは数多くのデバイスに対応していますし、毎週新たなデバイスへと幅を広げています。マシンにPCIワイヤレスデバイスが搭載されているか、あるならどういう種類かは以下のコマンドで確認できます。
+ $ '''/usr/sbin/lspci | grep -i wireless'''
+ 06:05.0 Network controller: Intel Corporation PRO/Wireless 2915ABG MiniPCI
+ Adapter (rev 05)
+全く同じ出力は出ないと思いますが、重要なのはPCIワイヤレスデバイスが表示されている点です。
+
+1. まずは802.11ネットワークのオプションを有効にします。
+ Networking
+     [*] Networking support
+     [*]   Generic IEEE 802.11 Networking Stack
+2. 加えて802.11に含まれる各種プロトコルと<code>Software MAC</code>オプションを有効にします。
+ Networking
+     [*] Networking support
+     [*]   Generic IEEE 802.11 Networking Stack
+     [*]     IEEE 802.11 WEP encryption (802.1x)
+     [M]     IEEE 802.11i CCMP support
+     [M]     IEEE 802.11i TKIP encryption
+     [M]     Software MAC add-on to the IEEE 802.11 networking stack
+3. 各種PCIワイヤレスデバイスのドライバはNetwork driverセクションにあります。
+ Device Drivers
+     Network device support
+         Wireless LAN (non-hamradio)
+             [*] Wireless LAN drivers (non-hamradio) &amp; Wireless Extensions
+             [*]   Wireless Extension API over RtNetlink
+ここには多種多様なPCIドライバがリストアップされていますので、デバイスに応じた適切なものを探しましょう。USBのワイヤレスデバイスは別のセクションにあります。
+ Device Drivers
+     USB Support
+         USB Network Adapters
+
+
+== ファイルシステム ==
+
+Linuxはボリュームマネージャやクラスタファイルシステムを含む様々なファイルシステムに対応しています。従来のファイルシステム（normalかjournaled）はメインのファイルシステムメニューから選択できます。
+ File systems
+     [*] Second extended fs support
+     [*] Ext3 journalling file system support
+     [ ] Reiserfs support
+     [ ] JFS filesystem support
+     [ ] XFS filesystem support
+このセクションではこれらとは別のタイプのファイルシステムについて説明します。
+
+=== RAID ===
+
+RAIDを使うといくつかの物理ディスクを組み合わせて一つの論理ディスクを構築することができます。データを複数のディスクに分散させることで冗長性を確保したり高速化したりすることができます。LinuxではハードウェアRAIDとソフトウェアRAIDの両方に対応しています。ハードウェアRAIDはディスクコントローラが扱うので、カーネルからの手出しは不要です。
+
+1. ソフトウェアRAIDはカーネルの担当範囲ですので、オプションで有効化できます。
+ Device Drivers
+     Multi-device support (RAID and LVM)
+         [*] Multiple devices driver support (RAID and LVM)
+         [*]   RAID support
+2. RAIDコンフィギュレーションにもいくつか種類があります。少なくともひとつは有効化しましょう。
+ Device Drivers
+     Multi-device support (RAID and LVM)
+         [*] Multiple devices driver support (RAID and LVM)
+         [*]   RAID support
+         [*]     Linear (append) mode
+         [*]     RAID-0 (striping) mode
+         [*]     RAID-1 (mirroring) mode
+         [*]     RAID-10 (mirrored striping) mode (EXPERIMENTAL)
+         [*]     RAID-4/RAID-5 mode
+         [*]     RAID-6 mode
+
+=== LVMとデバイスマッパ ===
+
+LVM (Logical Volume Manager) はRAIDと同じように複数のブロックデバイスをまとめあげて一つの論理デバイスを構築しますが、RAIDのようにデバイスレベルではなくブロックおよびセクターのマッピングレベルで動作します。したがっていくつかのディスクのいくつかの部分を合わせて一つのブロックデバイスかのように扱うことができます。このためにカーネルではデバイスマッパ (DM) と呼ばれるものを使います。
+
+1. DMサポートを有効にします。
+ Device Drivers
+     Multi-device support (RAID and LVM)
+         [*] Multiple devices driver support (RAID and LVM)
+         [*]   Device mapper support
+2. DMのヘルパーモジュール一覧から必要なものを選択します。
+ Device Drivers
+     Multi-device support (RAID and LVM)
+         [*] Multiple devices driver support (RAID and LVM)
+         [*]   Device mapper support
+         [*]     Crypt target support
+         [*]     Snapshot target (EXPERIMENTAL)
+         [*]     Mirror target (EXPERIMENTAL)
+         [*]     Zero target (EXPERIMENTAL)
+         [*]     Multipath target (EXPERIMENTAL)
+
+
+=== Windowsファイル共有 ===
+
+Sambaを使うとネットワーク内のWindowsマシンにアクセスし、ドライブやデバイスを共有できます。また、LinuxマシンをサーバとすることでWindowsマシンからまるで別のWindowsマシンかのようにアクセスすることもできます。
+
+Windowsファイル共有には2つのプロトコルがあります。SMBとCIFSです。Workgroupを使っているようなマシンやWindows 95/98などの少し古いマシンに接続するにはSMBを利用します。
+ File systems
+     Network File Systems
+         [*] SMB file system support (to mount Windows shares etc.)
+より新しいWindowsマシンに接続するにはCIFSの利用をおすすめします。
+ File systems
+     Network File Systems
+         [*] CIFS support
+これら2つのプロトコルの具体的な違いや選択基準については{{Link|LKN/Chapter11}}のSMB_FSおよびCIFSの節を参照してください。
+
+=== OCFS2 ===
+
+OCFS2はOracleによるクラスタ・ファイルシステムで、大規模なネットワークセットアップと小規模なローカルシステムで同時に利用できるのが特徴です。ストレージを拡大する必要が生じるにつれて別のディスクへ簡単に移動することができるので、OracleやDB2のような大規模データベースを利用する際に便利です。
+
+利用するには
+ File systems
+     [*] OCFS2 file system support
+
+
+== セキュリティ ==
+
+Linuxカーネルは数々のフックを提供しているので、自由にセキュリティモデルを適用することができます。現段階でソースツリーに含まれるセキュリティモデルの数は多くありませんが、将来は増えていくでしょう。
+
+=== デフォルトのセキュリティモデル ===
+
+通常、Linuxのセキュリティモデルは"Capability"と呼ばれるものになっています。何らかの特殊な理由で非セキュアなカーネルを作りたいのでなければ、必ず有効にしておいたほうがいいでしょう。
+ Security options
+     [*] Enable different security models
+     [*]   Default Linux Capabilities
+
+=== SELinux ===
+
+SELinuxはとてもポピュラーなセキュリティモデルです。いくつかのディストリビューションにはすでに組み込まれています。
+
+SELinuxを使うにはネットワークが有効になっている必要があります。前述の「ネットワーク」の項を参照してください。
+
+また、SELinuxを使うには監査機能を有効にする必要があります。
+ General setup
+     [*] Auditing support
+加えて、ネットワークセキュリティのオプションを有効にします。
+ Security options
+     [*] Enable different security models
+     [*]   Socket and Networking Security Hooks
+これでSELinux自体を有効に出来ます。
+ Security options
+     [*] Enable different security models
+     [*] NSA SELinux Support
+SELinuxにもいくつかオプションがありますので、必要なものを選択します。各項目についての詳しい説明はそれぞれのヘルプを参照してください。
+ Security options
+     [*] Enable different security models
+     [*] NSA SELinux Support
+     [ ]   NSA SELinux boot parameter
+     [ ]   NSA SELinux runtime disable
+     [*]   NSA SELinux Development Support
+     [*]   NSA SELinux AVC Statistics
+     (1)   NSA SELinux checkreqprot default value
+
+
+== カーネルデバッグ ==
+
+カーネルの中で何が起こっているのかを知るための有効な手立てとして、カーネルデバッグの各オプションがあります。以下で紹介するのはカーネルの仕組みを探検したりカーネルのソースコードの潜在的な問題を見つけるのに役立つ代表的なカーネルデバッグオプションです。
+
+=== カーネルログのタイムスタンプ ===
+
+カーネルは様々な内容をログファイルに吐き出します。これらのメッセージはシステムのログ（通常は''/var/log/messages''）を見るか、dmesgコマンドで確認できます。
+
+ここに出力されるメッセージがいったいいつ吐き出されたのかを確認できたら便利な時もありますが、dmesgは通常、タイムスタンプを表示してくれませんし、''/var/log/messages''のタイムスタンプは秒の単位までしか確認できません。カーネルのオプションによって、可能な限り細かいタイムスタンプを出力させることができます（通常、マイクロ秒の範囲になります）。
+
+タイムスタンプのオプションは
+ Kernel hacking
+     [*] Show timing information on printks
+
+=== SysRqキー ===
+
+キーボードの<code>SysRq</code>キーは、カーネルの動作中（あるいはクラッシュ時）にカーネルを操作するためのキーです。このキーを使うには
+ Kernel hacking
+     [*] Magic SysRq key 
+このオプションで有効になる様々なアクションについてはカーネルソースの''Documentation/sysrq.txt''を参照してください。
+
+=== デバッグファイルシステム ===
+
+様々なデバッグ情報を出力できるRAMベースのファイルシステムが''debubfs''です。これを有効にするには
+ Kernel hacking
+     [*] Debug filesystem
+このオプションを有効にしてからビルドしたカーネルを起動すると、''/sys/kernel/debug''ディレクトリが作成され、ここに<code>debugfs</code>ファイルシステムをマウントできます：
+ $ '''mount -t debugfs none /sys/kernel/debug'''
+あるいは''/etc/fstab''に次の行を書き加えます：
+ debugfs /sys/kernel/debug debugfs 0 0
+''debugfs''をマウントすると、大量のファイルが''/sys/kernel/debug''に現れます。これらのファイルは''procfs''や''sysfs''と同じように、全てカーネルによって動的かつ仮想的に生成されたものです。これらのファイルを見ていくとカーネルや各種サブシステムがどのように動作しているのかを確認できます。
+
+=== その他のカーネルデバッグ ===
+
+カーネル開発者のデバッグを手助けしたい、あるいはカーネルの動作を確認したい場合、これらのオプションを有効にするといいでしょう。これらのオプションはそれぞれ、有効にするとカーネルの動作が多少遅くなってしまうことに注意してください。
+
+ Kernel hacking
+     [*] Kernel debugging
+     [*]   Detect Soft Lockups
+     [ ]   Collect scheduler statistics
+     [*]   Debug slab memory allocations
+     [*]     Memory leak debugging
+     [*]   Mutex debugging, deadlock detection
+     [*]   Spinlock debugging
+     [*]   Sleep-inside-spinlock checking
+     [ ]   kobject debugging
+     [ ]   Highmem debugging
+     [ ]   Compile the kernel with debug info
+
+
 
 <references/>
+
 
 {{Nav
 |prev=LKN/Chapter7
