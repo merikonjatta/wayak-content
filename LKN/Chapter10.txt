@@ -132,7 +132,7 @@
 !dir/
 |指定したディレクトリ以下のみビルドする。
 |-
-!dir/file.[o|i|s]
+!<nowiki>dir/file.[o|i|s]</nowiki>
 |指定したファイルのみビルドする。
 |-
 !dir/file.ko
