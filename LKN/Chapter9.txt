@@ -110,7 +110,7 @@
 初期ブートメッセージを表示する。
 
 {|class=commandref
-!<nowiki>earlyprintk=[</nowiki>''vga''|''serial''][,tty''Sn''[,''baudrate'']][,keep]
+!<nowiki>earlyprintk=[vga|serial][,ttySn[,baudrate]][,keep]</nowiki>
 |-
 |従来のコンソールが初期化される以前のカーネルログを出力する。これらのメッセージはこのオプションを有効にしないと表示されることはないので、ハードウェアの問題を突き止めるのに便利。オプションにはVGAまたはシリアルポートを指定できるが、同時には指定できない。また、シリアルは''ttyS0''か''ttyS1''しか利用できない。通常のシリアルドライバではあまりうまく操作ができないが、VGAもいずれ普通のコンソール出力で上書きされてしまう。
 '',keep''を付加しておけば普通のコンソール出力が出ても初期メッセージが上書きされない。
@@ -201,7 +201,7 @@ IntelチップのAdvanced Programmable Interrupt Controller/APICなど）との�
 APICサブシステムの出力を制御する。
 
 {|class=commandref
-!apic=[quiet|verbose|debug]
+!<nowiki>apic=[quiet|verbose|debug]</nowiki>
 |-
 |APICサブシステムがブート時にどれだけの情報を出力するかを指定する。デフォルトは''quiet''。
 |}
@@ -338,7 +338,7 @@ inodeハッシュバケットの数を指定する。
 実行不可マップを有効/無効にする。
 
 {|class=commandref
-!noexec=[on|off]
+!<nowiki>noexec=[on|off]</nowiki>
 |-
 |メモリの一部を実行不可とマークするカーネルの機能を有効化または無効化する。デフォルトでON。
 |}
@@ -374,7 +374,7 @@ vlmalloc領域の大きさを指定する。
 VDSOマッピングを有効化/無効化する。
 
 {|class=commandref
-!vdso=[0|1]
+!<nowiki>vdso=[0|1]</nowiki>
 |-
 |VDSO (Virtual Dynamic Shared Object) マッピングを有効化(1)あるいは無効化(2)する。デフォルトでON。
 |}
@@ -432,7 +432,7 @@ VDSOマッピングを有効化/無効化する。
 NMI Watchdogの値を指定する。
 
 {|class=commandref
-!nmi_watchdog=[0|1|2|3]
+!<nowiki>nmi_watchdog=[0|1|2|3]</nowiki>
 |-
 |デフォルトのNMI Watchdogをオーバーライドするデバッグ用オプション。0はNMI Watchdogを使用しない。1はAPICがあれば使用する。2はローカルAPICがあれば使用する。3はNMI Watchdogが不正なので使用しない。
 |}
@@ -526,7 +526,7 @@ CPUを除外するには全タスクのCPUマスクを手動で指定すると�
 マイグレーションコスト判定のログレベル。
 
 {|class=commandref
-!migration_debug=[0|1|2]
+!<nowiki>migration_debug=[0|1|2]</nowiki>
 |-
 |マイグレーションコスト判定のログレベル。0だと何も出力されない（デフォルト）。1だと表の判定に関する情報が少し出力される。2だと多くの情報が出力される。カーネルログバッファをいっぱいにしてしまう量なので、実用的なのはシリアルコンソールを使っている時だけ。
 |}
@@ -793,7 +793,7 @@ RCUコールバックのキューの長さ。
 ACPIのオプション。
 
 {|class=commandref
-!acpi=[force|off|noirq|ht|strict]
+!<nowiki>acpi=[force|off|noirq|ht|strict]</nowiki>
 |-
 |ACPIのメインオプション。
 |-
@@ -833,7 +833,7 @@ ACPIのスリープのオプション。
 ACPIのシステムコントロール割り込みのトリガーモード。
 
 {|class=commandref
-!acpi_sci=[level|edge|high|low]
+!<nowiki>acpi_sci=[level|edge|high|low]</nowiki>
 |-
 |ACPIのシステムコントロール割り込みのトリガーモードを切り替える。
 |}
