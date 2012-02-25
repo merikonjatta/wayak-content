@@ -112,7 +112,7 @@ SATAディスクは''libata''と呼ばれるカーネルライブラリを使用
 
 LinuxでのCD書き込みは非常にシンプルです。カーネルがCD-ROMを読めれば、書きこむこともできます。IDEとSATA/SCSIで方法は異なります。
 
-==== IDE CD-ROMドライブ ===
+==== IDE CD-ROMドライブ ====
 
 IDEのCD-ROMドライブはメインのIDEディスクドライブと同じコントローラを使います。上記「IDEディスク」の節の通りにIDEコントローラが有効にされていることを確認してください。そこまでできれば、もうひとつだけオプションを追加します。
 
@@ -121,7 +121,7 @@ IDEのCD-ROMドライブはメインのIDEディスクドライブと同じコ�
      [*]   Enhanced IDE/MFM/RLL disk/cdrom/tape/floppy support
      [M]     Include IDE/ATAPI CDROM support
 
-==== SCSIおよびSATA CD-ROMドライブ ===
+==== SCSIおよびSATA CD-ROMドライブ ====
 
 SATAとSCSIのCD-ROMドライブはメインのディスクと同じコントローラを使います。上記の手順に従ってSCSIおよびSATAのコントローラが有効になっていることを確認してください。あとは以下のオプションを追加するだけです。
 
