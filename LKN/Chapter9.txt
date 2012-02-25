@@ -40,20 +40,20 @@
 
 出力先コンソールデバイスとそのオプション。
 
-{|
+{|class=commandref
 |-
-|<code>console=Options</code>
+!console=Options
 |-
-|tty''n''
+!tty''n''
 |-
 |バーチャルコンソールデバイス''n''を使用する。
 |-
-|tty''Sn''[,''options''],ttyUSB0[,''options'']
+!tty''Sn''[,''options''],ttyUSB0[,''options'']
 |-
 |指定したシリアルポートを使用する。optionsは''bbbbpnf''という形式で指定する。''bbbb''はボーレート、''p''はパリティ（n, oまたはe）、''n''はビット数、''f''はフローコントロール（rでRTS、もしくは省略）。デフォルトは''9600n8''。
 シリアルコンソールの使い方については''Documentation/serial-control.txt''を参照のこと。コンソールを利用したいがシリアルポートがない場合は''netconsole''オプションを参照のこと。
 |-
-|uart,io,''addr''[,''options''],uart,mmio,''addr''[,''options'']
+!uart,io,''addr''[,''options''],uart,mmio,''addr''[,''options'']
 |-
 |ポーリング型のコンソールを8250/16550UARTで開始し、指定したI/OポートまたはMMIOアドレスを利用し、後にttySに切り替える。オプションの指定方法は前述のttySと同じ。
 |}

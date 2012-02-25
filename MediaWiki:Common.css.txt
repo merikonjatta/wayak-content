@@ -24,3 +24,8 @@ textarea { font-family:monospace; font-size:1em; }
 #nav div a,
 #nav div h5 { text-shadow: none; }
 #mBody { font-size: 14px; }
+
+
+/* 個別スタイル */
+table.commandref th { font-family:monospace; }
+table.commandref td { padding-left: 2em; }
