@@ -1,0 +1,39 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第10章: ビルドコマンドラインリファレンス}}
+{{Nav
+|prev=LKN/Chapter9
+|next=LKN/Chapter11
+}}
+
+= 第10章: ビルドコマンドラインリファレンス =
+
+{{LKN/Chapter4}}で述べたように、カーネルのビルドを司るのは''make''プログラムで、これにターゲットを指定することで特定のビルド作業を行います。{{LKN/Chapter4}}では基本的なターゲットだけ紹介しましたが、実は他にも様々なターゲットが用意されています。本章ではそれらについて解説します。
+
+ターゲットは全て、''make''にたいしてコマンドラインオプションとして指定します。いくつかは同時に指定することもできます：
+ $ '''make mrproper xconfig'''
+以下では、ターゲットをいくつかに分類して紹介しています。
+
+ビルドディレクトリで
+ $ '''make help'''
+とすることでこれらのヘルプを見ることができます。
+
+== 情報収集のためのターゲット ==
+
+次のターゲットはカーネルのバージョンを出力します。主にスクリプトから利用されます。
+
+{|class=commandref
+!kernelrelease
+|カーネルのバージョンを出力する。ビルドシステムによって判定された値。
+|-
+!kernelversion
+|カーネルのバージョンを出力する。Makefileに記述された値。この値は''kernelrelease''と違い、''localversion''ファイルの内容やコンフィグオプションに左右されない。
+|}
+
+
+<references/>
+
+
+{{Nav
+|prev=LKN/Chapter9
+|next=LKN/Chapter11
+}}
