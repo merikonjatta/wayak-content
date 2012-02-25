@@ -27,5 +27,6 @@ textarea { font-family:monospace; font-size:1em; }
 
 
 /* 個別スタイル */
-table.commandref th { font-family:monospace; }
+table.commandref { border:1px solid #ccc; border-collapse:collapse; background:#f9f9fa; }
+table.commandref th { text-align:left; font-family:monospace; }
 table.commandref td { padding-left: 2em; }
