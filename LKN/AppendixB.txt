@@ -1,0 +1,15 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=付録B: 参考文献}} 
+{{Nav
+|prev=LKN/AppendixA
+}}
+
+= 付録B: 参考文献 =
+
+
+<references/>
+
+
+{{Nav
+|prev=LKN/AppendixA
+}}

@@ -1,0 +1,17 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第11章: コンフィグオプションリファレンス}}
+{{Nav
+|prev=LKN/Chapter10
+|next=LKN/AppendixA
+}}
+
+= 第11章: コンフィグオプションリファレンス =
+
+
+<references/>
+
+
+{{Nav
+|prev=LKN/Chapter10
+|next=LKN/AppendixA
+}}
