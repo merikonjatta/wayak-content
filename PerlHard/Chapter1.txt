@@ -4,7 +4,7 @@
 |next=PerlHard/Chapter3
 }}
 
-= 第2章: 正規表現 =
+= 第1章: 配列とスカラー =
 
 
 <references/>
