@@ -1,7 +1,7 @@
 <!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
 = Learning Perl the Hard Way =
 
-[[Learning_perl_the_hard_way.jpg|thumb]]
+[[learning_perl_the_hard_way.jpg|thumb]]
 {{#set: title=Learning Perl the Hard Way}}
 
 {|class="default"
