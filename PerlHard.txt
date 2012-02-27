@@ -1,0 +1,38 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+= Learning Perl the Hard Way =
+
+[[Learning_perl_the_hard_way.jpg|thumb]]
+{{#set: title=Learning Perl the Hard Way}}
+
+{|class="default"
+|-
+|著者
+|Allen B. Downey
+|-
+|出版社
+|Green Tea Press
+|-
+|出版年
+|2003
+|-
+|Webサイト
+|http://www.greenteapress.com/perl/
+|-
+|ライセンス
+|[http://www.gnu.org/copyleft/fdl.html GFDL]
+|}
+
+==ライセンス==
+
+翻訳文は原文がコピーレフトのため
+[http://www.gnu.org/copyleft/fdl.html GFDL]
+で公開しています。
+
+==目次==
+* {{ Link | PerlHard/Chapter1 }}
+* {{ Link | PerlHard/Chapter2 }}
+* {{ Link | PerlHard/Chapter3 }}
+* {{ Link | PerlHard/Chapter4 }}
+* {{ Link | PerlHard/Chapter5 }}
+* {{ Link | PerlHard/Chapter6 }}
+

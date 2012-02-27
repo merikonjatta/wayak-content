@@ -1,0 +1,14 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第6章: コールバックとパイプ}}
+{{Nav
+|prev=PerlHard/Chapter5
+}}
+
+= 第6章: コールバックとパイプ =
+
+
+<references/>
+
+{{Nav
+|prev=PerlHard/Chapter5
+}}

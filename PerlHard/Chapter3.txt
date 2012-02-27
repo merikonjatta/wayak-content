@@ -1,0 +1,16 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第3章: ハッシュ}}
+{{Nav
+|prev=PerlHard/Chapter2
+|next=PerlHard/Chapter4
+}}
+
+= 第3章: ハッシュ =
+
+
+<references/>
+
+{{Nav
+|prev=PerlHard/Chapter2
+|next=PerlHard/Chapter4
+}}

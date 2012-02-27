@@ -11,3 +11,9 @@ Wayakは2011年度[http://rohm.drm.doshisha.ac.jp/ 同志社ローム記念館�
 |[[LKN|Linux Kernel in a Nutshell]]
 |{{#show: LKN | ?summary#}}
 |}
+
+{|-
+|[[File:Learning_perl_the_hard_way.jpg|thumb|left|link=PerlHard]]
+|[[PerlHard|Learning Perl the Hard Way]]
+|{{#show: PerlHard | ?summary#}}
+|}

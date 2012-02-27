@@ -1,0 +1,16 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第5章: モジュール}}
+{{Nav
+|prev=PerlHard/Chapter4
+|next=PerlHard/Chapter6
+}}
+
+= 第5章: モジュール =
+
+
+<references/>
+
+{{Nav
+|prev=PerlHard/Chapter4
+|next=PerlHard/Chapter6
+}}

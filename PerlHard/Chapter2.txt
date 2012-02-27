@@ -1,0 +1,16 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+{{#set: title=第2章: 正規表現}}
+{{Nav
+|prev=PerlHard/Chapter1
+|next=PerlHard/Chapter3
+}}
+
+= 第2章: 正規表現 =
+
+
+<references/>
+
+{{Nav
+|prev=PerlHard/Chapter1
+|next=PerlHard/Chapter3
+}}
