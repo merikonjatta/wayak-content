@@ -7,6 +7,243 @@
 
 = 付録A: ユーティリティ =
 
+本書で紹介したように、カーネルソースを入手し、ビルドし、更新し、メンテナンスするのには多数のステップが関わってきます。開発者というのは元来面倒臭がりですので、いろんなルーチンワークを自動化するツールを作成しています。ここでは便利なツールとその使い方を紹介します。
+
+Linuxカーネルの開発は通常のソフトウェア開発といくつかの点で異なっています。カーネルプログラミングの特殊な需要としては、
+* 頻繁なリリーススケジュールに対して更新を適用していくこと
+* 他人の変更点のコンフリクトを解消していくこと
+* 変更点を、他人が簡単に適用できる形で提供すること
+などがあります。
+
+
+== patchとdiff ==
+
+この節はもともと''Linux Journal''で公開された記事を元にしています。
+
+カーネルに対する作業で最もよく使う部類のツールに''patch''と''diff''があります。これらのツールを使うには、カーネルソースのツリーを2つ用意します。ひとつは「クリーン」なツリー、もうひとつは「作業用」のツリーです。クリーンな方はカーネルのリリースバージョンをそのまま、作業用の方は同じリリースバージョンにあなたの変更点を加えたものになります。この状態で''patch''と''diff''を使えばあなたの変更点を抽出し、カーネルリリースへ適用できます。
+
+例として、{{Link|LKN/Chapter3}}の手順に従って最新のカーネルリリースを含んだディレクトリを2つ作成しましょう。
+ $ '''tar -zxf linux-2.6.19.tar.gz'''
+ $ '''mv linux-2.6.19 linux-2.6.19-dirty'''
+ $ '''tar -zxf linux-2.6.19.tar.gz'''
+ $ '''ls'''
+ linux-2.6.19/
+ linux-2.6.19-dirty/
+この状態で''-dirty''ディレクトリ内に自由に変更を加えます。終わったら、パッチを生成します。
+ $ '''diff -Naur -X linux-2.6.19/Documentation/dontdiff linux-2.6.19/ \'''
+ '''linux-2.6.19-dirty/ &gt; my_patch'''
+これで''my_patch''というファイルが作られ、ここにはクリーンな2.6.19と作業用ツリーの差分が格納されます。このパッチはメールなどで他人に送信できます。
+
+== 新しいカーネルバージョン ==
+
+カーネルの新バージョンがリリースされ、以前の変更をそちらに適用したい場合は、生成したパッチをクリーンなカーネルに適用します。これは以下の手順で出来ます。
+
+1. 先ほどの手順でパッチを生成します。
+
+2. ''kernel.org''で提供されている公式パッチを使ってカーネルのバージョンをひとつ前に進めます。
+ $ '''cd linux-2.6.19'''
+ $ '''patch -p1 &lt; ../patch-2.6.20'''
+ $ '''cd ..'''
+ $ '''mv linux-2.6.19 linux-2.6.20'''
+
+3. 作業用ツリーから前回のパッチ分を除去し、公式パッチでバージンをひとつ前に進めます。
+ $ '''cd linux-2.6.19-dirty'''
+ $ '''patch -p1 -R &lt; ../my_patch'''
+ $ '''patch -p1 &lt; ../patch-2.6.20'''
+ $ '''cd ..'''
+ $ '''mv linux-2.4.19-dirty linux-2.6.20-dirty'''
+
+4. パッチの適用を試みます。
+ $ '''cd linux-2.6.20-dirty'''
+ $ '''patch -p1 &lt; ../my_patch'''
+
+もしパッチが綺麗に適用できない場合、コンフリクトを解消する必要があります。''patch''コマンドがコンフリクト箇所を教えてくれます。''.rej''と''.orig''ファイルが残されますので、これらを見ながらエディタで修正して行きましょう。ソースツリーの、あなたが更新した部分が、リリースでも更新されていた場合、この作業が最も難しいと思います。
+
+この開発フローに従うならば、http://cyberelk.net/tim/patchutils で入手できる''patchutils'' ツール群の利用を強くお勧めします。パッチに関する多くの作業を大幅に単純化してくれます。
+
+== quiltでパッチを管理する ==
+
+''patch''と''diff''を使った開発フローはまずまずうまくいくのですが、多くの人はやがてこれが面倒になってしまい、複雑なマージ作業をしなくて済む方法を模索し始めます。幸運なことに、カーネル開発者によって''quilt''というプログラムが開発されており、これを使うとソースツリーに対する複数のパッチを簡単に遣り繰りできます。
+
+''quilt''のアイデアは、Andrew Morton氏がメモリ管理サブシステムの開発のために使ったスクリプト群が元になっており、これらがやがてカーネルツリー全体に使われるようになりました。当初は彼独自のワークフローに強く結びついたものでしたが、その背後には実に強力なアイデアがありました。これをAndrew Gruenbacher氏が''quilt''というツールにまとめ上げました。
+
+''quilt''の基本は、クリーンなソースツリーに対していくつもパッチを適用していくという流れです。ソースツリーに対してパッチをpushしたりpopしたりしていく中で、これらのパッチをシンプルに管理しようという考えに基づいています。
+
+1. まずはいつもどおり、カーネルのソースツリーを用意します。
+ $ '''tar -zxf linux-2.6.19.tar.gz'''
+ $ '''ls'''
+ linux-2.6.19/
+
+2. その中に入ります。
+ $ '''cd linux-2.6.19'''
+
+3. ''patches''ディレクトリを作ります。この中にパッチが全て入ります。
+ $ '''mkdir patches'''
+
+4. ''quilt''に、''patch1''という新しいパッチを作らせます。
+ $ '''quilt new patch1'''
+ Patch patches/patch1 is now on top
+
+5. ''quilt''には、このパッチで変更されるファイルを全て知らせなければなりません。''add''コマンドで対象ファイルを追加していきます。
+ $ '''quilt add Makefile'''
+ File Makefile added to patch patches/patch1
+
+6. ''Makefile''を編集し、EXTRAVERSIONの行を修正して保存します。終わったら、''quilt''にパッチをリフレッシュさせます。
+ $ '''quilt refresh'''
+ Refreshed patch patches/patch1
+
+これで''patches/patch1''ファイルにはこの変更内容が記録されます。
+ $ '''cat patches/patch1'''
+ Index: linux-2.6.19/Makefile
+ ===================================================================
+ --- linux-2.6.19.orig/Makefile
+ +++ linux-2.6.19/Makefile
+ @@ &minus;1,7 +1,7 @@
+  VERSION = 2
+  PATCHLEVEL = 6
+  SUBLEVEL = 19
+ -EXTRAVERSION =
+ +EXTRAVERSION = -dirty
+  NAME=Crazed Snow-Weasel
+ 
+  # *DOCUMENTATION*
+
+続けて同じパッチに変更を記録し続けてもいいですし、別のパッチを作っても構いません。3つのパッチpatch1、patch2、patch3を作ったとしたら、これらは重ねて順番に適用されることになります。
+
+現在のパッチのリストを確認するには、
+ $ '''quilt series -v'''
+ + patches/patch1
+ + patches/patch2
+ = patches/patch3
+
+この出力には3つのパッチが適用されていることが現れており、最新はpatch3だと分かります。
+
+カーネルの新しいバージョンがリリースされ、これらの変更をそちらに適用したい場合、''quilt''を使って以下のようにします。
+
+1. 現在のツリーに適用されているパッチをpopします。
+ $ '''quilt pop -a'''
+ Removing patch patches/patch3
+ Restoring drivers/usb/Makefile
+ Removing patch patches/patch2
+ Restoring drivers/Makefile
+ Removing patch patches/patch1
+ Restoring Makefile
+ No patches applied
+
+2. ''kernel.org''より入手した公式パッチを使ってバージョンをひとつ前に進めます。
+ $ '''patch -p1 &lt; ../patch-2.6.20'''
+ $ '''cd ..'''
+ $ '''mv linux-2.6.19 linux-2.6.20'''
+
+3. ''quilt''でパッチをこの上にpushします。
+ $ '''quilt push'''
+ Applying patch patches/patch1
+ patching file Makefile
+ Hunk #1 FAILED at 1.
+ 1 out of 1 hunk FAILED -- rejects in file Makefile
+ Patch patches/patch1 does not apply (enforce with -f)
+
+4. 最初のパッチがキレイに適用されないので、まずは強制的に適用し、そのあとで修正します。
+ $ '''quilt push -f'''
+ Applying patch patches/patch1
+ patching file Makefile
+ Hunk #1 FAILED at 1.
+ 1 out of 1 hunk FAILED -- saving rejects to file Makefile.rej
+ Applied patch patches/patch1 (forced; needs refresh)
+ $ '''vim Makefile.rej Makefile'''
+
+5. 全てのコンフリクトが修正できたら、パッチをリフレッシュします。
+ $ '''quilt refresh'''
+ Refreshed patch patches/patch1
+
+6. 残りのパッチをpushしていきます。
+ $ '''quilt push'''
+ Applying patch patches/patch2
+ patching file drivers/Makefile
+ Now at patch patches/patch2
+ $ '''quilt push'''
+ Applying patch patches/patch3
+ patching file drivers/usb/Makefile
+ Now at patch patches/patch3
+
+''quilt''にはまた、全部のパッチをメーリングリストに送信する機能、シリーズの途中のパッチを削除する機能、シリーズ内のパッチを探す機能など多くの強力な機能が含まれています。
+
+カーネル開発に携わるなら、たとえ小規模な変更で会っても、''diff'と''patch''の組み合わせより''quilt''の使用を強くお勧めします。時間と労力を大幅に節約できるでしょう。
+
+個人的には、このツールはいくら薦めても薦めきれません。毎日、''quilt''を使って色んなツリーに大して何百ものパッチを管理しています。また、様々なディストリビューションがカーネルの配布にこのツールを使っているので、成熟したコミュニティも形成されています。
+
+== git ==
+
+''git''は、Linus Torvalds氏によって作られたソース管理ツールです。従来のCVSなどと違って分散型になっており、コミットするときにサーバへ接続していなくてもよいというのが特徴です。
+
+''git''は現在世に出ているソース管理ツールの中でも最も強力で、柔軟で、高速なソース管理ツールで、その背後には活発な開発チームがあります。メインのWebサイトはhttp://git.or.cz/ です。''git''を使い始めるときは公開されているチュートリアルをひと通り読み、仕組みと流れを理解しておくのがいいでしょう。
+
+Linuxカーネルは''git''で管理されています。最新の''git''ツリーは http://www.kernel.org/git/ に置いてあり、ここにはその他のgitレポジトリも大量にあります。
+
+Linuxカーネル開発をするのにgitは必須ではありませんが、バグを追跡するのに非常に便利です。バグレポートを出すと、''git bisect''で正確な発生箇所を特定してくれと頼まれるかも知れません。そういったときはgitのドキュメンテーションを参照しましょう。
+
+== ketchup ==
+
+''ketchup''は、複数のカーネルバージョンを切り替えるのに便利なツールです。主な機能として
+* 最新版のカーネルを見つけ、ダウンロードして展開する
+* 現在のカーネルにパッチを当てて任意のバージョンへアップグレードする
+* ''-mm''や''-stable''も含め、様々なブランチを扱う
+* そのために必要なパッチやtarballをダウンロードする
+* ダウンロードしたファイルのGPGシグネチャを確認する
+などがあります。
+
+''ketchup''は http://www.selenic.com/ketchup/ で公開されており、ドキュメンテーションは http://www.selenic.com/ketchup/wiki/ で見ることができます。
+
+''ketchup''を使って特定のバージョンのカーネルをダウンロードし、それを別のバージョンに切り替える簡単な手順を紹介しておきます。
+
+例として、2.6.16.24をダウンロードします。
+ $ '''mkdir foo'''
+ $ '''cd foo'''
+ $ '''ketchup -r 2.6.16.24'''
+ None -&gt; 2.6.16.24
+ Unpacking linux-2.6.17.tar.bz2
+ Applying patch-2.6.17.bz2 -R
+ Applying patch-2.6.16.24.bz2
+ Current directory renamed to /home/gregkh/linux/linux-2.6.16.24
+これを最新版に更新するにはコマンドをひとつ打つだけです。
+ $ '''ketchup -r 2.6'''
+ 2.6.16.24 -&gt; 2.6.17.11
+ Applying patch-2.6.16.24.bz2 -R
+ Applying patch-2.6.17.bz2
+ Downloading patch-2.6.17.11.bz2
+ --22:21:14--  http://www.kernel.org/pub/linux/kernel/v2.6/patch-2.6.17.11.bz2
+            =&gt; &grave;/home/greg/.ketchup/patch-2.6.17.11.bz2.partial'
+ Resolving www.kernel.org... 204.152.191.37, 204.152.191.5
+ Connecting to www.kernel.org|204.152.191.37|:80... connected.
+ HTTP request sent, awaiting response... 200 OK
+ Length: 36,809 (36K) [application/x-bzip2]
+ 100%[====================================&gt;] 36,809        93.32K/s
+ 22:21:14 (92.87 KB/s) - &grave;/home/greg/.ketchup/patch-2.6.17.11.bz2.partial' saved
+ [36809/36809]
+ Downloading patch-2.6.17.11.bz2.sign
+ --22:21:14--  http://www.kernel.org/pub/linux/kernel/v2.6/patch-2.6.17.11.bz2.sign
+            =&gt; &grave;/home/greg/.ketchup/patch-2.6.17.11.bz2.sign.partial'
+ Resolving www.kernel.org... 204.152.191.37, 204.152.191.5
+ Connecting to www.kernel.org|204.152.191.37|:80... connected.
+ HTTP request sent, awaiting response... 200 OK
+ Length: 248 [application/pgp-signature]
+ 100%[====================================&gt;] 248           --.--K/s
+ 22:21:14 (21.50 MB/s) - &grave;/home/greg/.ketchup/patch-2.6.17.11.bz2.sign.partial' saved
+ [248/248]
+ Verifying signature...
+ gpg: Signature made Wed Aug 23 15:01:04 2006 PDT using DSA key ID 517D0F0E
+ gpg: Good signature from "Linux Kernel Archives Verification Key
+ &gt;ftpadmin@kernel.org&lt;"
+ gpg: WARNING: This key is not certified with a trusted signature!
+ gpg:          There is no indication that the signature belongs to the owner.
+ Primary key fingerprint: C75D C40A 11D7 AF88 9981  ED5B C86B A06A 517D 0F0E
+ Applying patch-2.6.17.11.bz2
+ Current directory renamed to /home/greg/linux/tmp/x/linux-2.6.17.11
+
+出力から、''ketchup''が自動的に最新版（2.6.17.11）を判定し、必要なパッチをダウンロードしてくれた事が分かります。
+
+カーネルソースの入手には''ketchup''の利用を強くお勧めします。サーバ上のパッチを見つけ、ダウンロードし、正確性を確かめてから適用という一連の流れを自動化してくれるのです。''ketchup''と''quilt''を組み合わせれば非常に効率的にカーネル開発ができるでしょう。
+
 
 <references/>
 
