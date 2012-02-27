@@ -6,6 +6,75 @@
 
 = 付録B: 参考文献 =
 
+本章の内容のほとんどはカーネルのドキュメンテーションとソースコードから取られています。これらの情報源を使えばカーネルのビルドやインストールに関する最新の情報を入手できるでしょう。
+
+== 書籍 ==
+
+Linuxカーネル開発については優良書籍がいくつもありますが、ビルドとインストールにフォーカスしたものはあまりありません。カーネルを扱う際に便利な本をいくつか挙げておきます。
+
+=== 一般的なLinux書籍 ===
+
+;Ellen Siever,Aaron Weber,Stephen Figgins,Robert Love,and Arnold Robbins. ''Linux in a Nutshell'' (O'Reilly), 2005.
+:  Linuxの網羅的なコマンドリファレンスならこの本です。ほとんどのコマンドが載っています。
+;Yaghmour, Karim. ''Building Embedded Linux Systems'' (O'Reilly), 2003.
+:  組み込みシステムの話題が中心ですが、クロスコンパイラなツールチェインとカーネルの作り方に関する素晴らしい節があります。他にもカスタマイズに関して有用な情報が多く載っています。
+
+=== Linuxカーネルに関する書籍 ===
+
+これらの書籍はカーネル開発に興味を持つプログラマに向けて書かれたものです。本書より技術的な内容が多いですが、カーネルのソースコードについて学びたければよいスタート地点となるでしょう。
+
+;Jonathan Corbet, Alessandro Rubini, and Greg Kroah-Hartman. ''Linux Device Drivers'' (O'Reilly), 2005.
+:  カーネルのデバイスドライバサブシステムがどのように動作しているかを解説し、実際のドライバを使った豊富な事例を紹介しています。Linuxカーネルドライバの開発がしたい全ての人にお勧めです。インターネットで無料で読むこともできます： http://lwn.net/Kernel/LDD3/
+;Love, Robert. ''Linux Kernel Development'' (Novell Press Publishing), 2005.
+:  カーネルのソースコードのほぼ全体をカバーした本です。カーネルの各所がどのような実装になっているかを知るのに有用です。
+;Bovet, Daniel P. and Cesate, Marco. ''Understanding the Linux Kernel'' (O'Reilly), 2005.
+:  Linuxカーネルコアの設計と実装について書かれた本です。各所で使われているアルゴリズムを理解するのに役立ちます。カーネルの中身について知りたい人にお勧めです。
+
+== 各種ツール ==
+
+本書で紹介した各種ツールの入手先をリストアップしておきます。
+
+;Linuxカーネル
+:  http://www.kernel.org と ftp://ftp.kernel.org にLinuxカーネルソースの各バージョンが置かれています。gitレポジトリは http://www.kernel.org/git/ にあります。
+;gcc
+:  GNU Cコンパイラに関連するものは http://gcc.gnu.org/ にあります。
+;binutils
+:  binutils関連のものは http://www.gnu.org/software/binutils/ にあります。
+;make
+:  make関連のものは http://www.gnu.org/software/make/ にあります。
+;util-linux
+:  util-linuxの各バージョンは http://www.kernel.org/pub/linux/utils/util-linux/ にあります。
+;module-init-tools
+:  module-init-toolsの各バージョンは http://www.kernel.org/pub/linux/utils/kernel/module-init-tools/ にあります。
+;e2fsprogs
+:  e2fsprogsパッケージのメインプロジェクトサイトは http://e2fsprogs.sourceforge.net/ です。
+;jfsutils
+:  jfsutilsパッケージのメインプロジェクトサイトは http://jfs.sourceforge.net/ です。
+;reiserfsprogs
+:  reiserfsprogsパッケージのメインプロジェクトサイトは http://www.namesys.com/download.html です。
+;xfsprogs
+:  xfsprogsパッケージのメインプロジェクトサイトは http://oss.sgi.com/projects/xfs/ です。
+;quota-tools
+:  quota-toolsパッケージのメインのウェブサイトは http://sourceforge.net/projects/linuxquota/ です。
+;nfs-utils
+:  nfs-utilsパッケージのメインプロジェクトサイトは http://nfs.sf.net/ です。
+;udev
+:  udevの各バージョンは http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html にあります。
+;procfs
+:  procfsパッケージのメインプロジェクトサイトは http://procps.sourceforge.net/ です。
+;patchutils
+:  patchutilsパッケージの各バージョンは http://cyberelk.net/tim/patchutils にあります。
+;git
+:  gitプロジェクトのメインサイトは http://git.or.cz/ です。
+;ketchup
+:  ketchupプログラムのメインサイトは http://www.selenic.com/ketchup/ です。
+;quilt
+:  quiltプログラムのメインサイトは http://savannah.nongnu.org/projects/quilt です。
+;distcc
+:  distccプログラムのメインサイトは http://distcc.samba.org/ です。
+;ccache
+:  ccacheプログラムのメインサイトは http://ccache.samba.org/ です。
+
 
 <references/>
 
