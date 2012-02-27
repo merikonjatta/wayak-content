@@ -6,45 +6,45 @@
 
 {|class="default"
 |-
-|è‘—è€…
+|’˜Ò
 |Greg Kroah-Hartman
 |-
-|å‡ºç‰ˆç¤¾
+|o”ÅĞ
 |O'Reilly
 |-
-|å‡ºç‰ˆå¹´
+|o”Å”N
 |2006
 |-
-|Webã‚µã‚¤ãƒˆ
+|WebƒTƒCƒg
 |http://www.kroah.com/lkn/
 |-
-|ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
+|ƒ‰ƒCƒZƒ“ƒX
 |[http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
 |}
 
-==ãƒ©ã‚¤ã‚»ãƒ³ã‚¹==
+==ƒ‰ƒCƒZƒ“ƒX==
 
-ç¿»è¨³æ–‡ã¯åŸæ–‡ãŒã‚³ãƒ”ãƒ¼ãƒ¬ãƒ•ãƒˆã®ãŸã‚
+–|–ó•¶‚ÍŒ´•¶‚ªƒRƒs[ƒŒƒtƒg‚Ì‚½‚ß
 [http://creativecommons.org/licenses/by-sa/2.5/ Creative Commons Attribution-ShareAlike 2.5]
-ã§å…¬é–‹ã—ã¦ã„ã¾ã™ã€‚
+‚ÅŒöŠJ‚µ‚Ä‚¢‚Ü‚·B
 
-==ç›®æ¬¡==
+==–ÚŸ==
 * {{ Link | LKN/Preface }}
-* Part I: ã‚«ãƒ¼ãƒãƒ«ã‚’ãƒ“ãƒ«ãƒ‰ã™ã‚‹
+* Part I: ƒJ[ƒlƒ‹‚ğƒrƒ‹ƒh‚·‚é
 ** {{ Link | LKN/Chapter1 }}
 ** {{ Link | LKN/Chapter2 }}
 ** {{ Link | LKN/Chapter3 }}
 ** {{ Link | LKN/Chapter4 }}
 ** {{ Link | LKN/Chapter5 }}
 ** {{ Link | LKN/Chapter6 }}
-* Part II: ã‚«ã‚¹ã‚¿ãƒã‚¤ã‚º
+* Part II: ƒJƒXƒ^ƒ}ƒCƒY
 ** {{ Link | LKN/Chapter8 }}
 ** {{ Link | LKN/Chapter9 }}
-* Part III: ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹
+* Part III: ƒŠƒtƒ@ƒŒƒ“ƒX
 ** {{ Link | LKN/Chapter9 }}
 ** {{ Link | LKN/Chapter10 }}
 ** {{ Link | LKN/Chapter11 }}
-* Part IV: ä»˜éŒ²
+* Part IV: •t˜^
 ** {{ Link | LKN/AppendixA }}
 ** {{ Link | LKN/AppendixB }}
 

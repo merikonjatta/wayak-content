@@ -409,6 +409,392 @@ Netfilterの各種モジュールには、従来のipmasqadm、ipchains、プロ
 
 == NET_SCHED ==
 
+ネットワークデバイスから複数のパケットを送信する必要があるとき、カーネルはどれを先に送出するか選択せねばなりません。これはキューイングの問題です。いかに「公平に」キューするかについてはいくつかの案が議論されています。
+
+ここでnoを選ぶと、標準的なパケットスケジューラであるFIFO（先着順）スケジューラが使われます。yesを選ぶと、他のアルゴリズムを選択することができ、それぞれのネットワークデバイスに違ったアルゴリズムを割り当てることができます。接続されたネットワークデバイスのいくつかがリアルタイム制約を持つ場合や、最大データフローレートを制限したい場合などに便利です。
+
+スケジューラを管理するには''iproute2+tc''パッケージに含まれるユーザレベルのユーティリティが必要になります（http://linux-net.osdl.org/index.php/Iproute2 から入手）。
+
+QoS (Quality of Service) サポートを有効にすると、diffservとRSVPが使えるようになります。ドキュメンテーションおよびソフトウェアは http://diffserv.sourceforge.net から入手できます。
+
+== IRDA ==
+
+赤外線通信。
+
+IrDAによる赤外線通信を利用したければyesを選びます。IrDAは多くのPDAやラップトップで採用されている近距離無線通信の標準仕様です。
+
+IrDAを使うには''irattach''などのユーザスペースツールも必要になります。詳しくは''Documentation/networking/irda.txt''を参照して下さい。また、http://www.tldp.org/docs.html#howto のIR-HOWTOも読んでみて下さい。
+
+vCardやvCalあどのデータをPDAとやり取りするならOBEXアプリケーションが必要になります。OpenObexは http://sourceforge.net/projects/openobex から入手できます。
+
+== IRLAN ==
+
+IrLANプロトコル。
+
+IrLANプロトコルを使いたければyesを選びます。IrLANは赤外線通信を使ってEthernetをエミュレートする無線LAN通信技術です。
+
+IrLANを使えばHP NetbeamIRや ESI JetEye NETなどの赤外線アクセスポイントを利用できるようになります。また、別のLinuxマシンとアドホックなIrLANネットワークを構成することもできます。
+
+== IRNET ==
+
+IrNETプロトコル。
+
+IrNETプロトコルを使いたければyesを選びます。IrNETはPPPドライバですので、PPP自体も有効にする必要があります。
+
+IrNETはIrDA上でTCP/IP通信を行うもう一つの方法です。IrDAソケット上で同期的PPPを利用します。Linuxマシン同士、またはWindowsマシンとの間で通信できます。
+
+== IRCOMM ==
+
+IrCOMMプロトコル。
+
+IrCOMMプロトコルを使いたければyesを選びます。IrCOMMはシリアルポートをエミュレートし、ttyをしゃべるすべてのアプリケーションを赤外線で利用することができるようになります。PPPやminicomが含まれます。
+
+== IRDA_ULTRA ==
+
+Ultraプロトコル。
+
+UltraIRDAプロトコルを使いたければyesを選びます。時計やビーコンなどのシンプルな機器を使ってIrDAのオーバーヘッドなしに赤外線通信でデータを交換するためのプロトコルです。IrDAのオーバーヘッドとはハンドシェイクや管理フレーム、可変長ヘッダなどに由来するもので、これらがありません。
+
+== BT ==
+
+Bluetooth。
+
+Bluetoothは低価格で低消費電力な短距離無線通信テクノロジーです。IrDAなどの代替として登場しました。半径10mくらいで通信ができます。詳しくは http://www.bluetooth.com を参照して下さい。
+
+LinuxのBluetoothサブシステムは以下のレイヤーから成っています：
+
+;Bluetoothコア
+:  HCIデバイスと接続マネージャとスケジューラ
+;HCIデバイスドライバ
+:  ハードウェアのインタフェース
+;SCOモジュール
+:  SCOオーディオリンク
+;L2CAPモジュール
+:  Logical Link ControlとAdaptation Protocol
+;RFCOMMモジュール
+:  RFCOMMプロトコル
+;BNEP
+:  Module Bluetooth Network Encapsulation Protocol
+;CMTP
+:  Module CAPI Message Transport Protocol
+;HIDP
+:  Module Human Interface Device Protocol
+
+Bluetoothサブシステムを使うにはユーザスペースユーティリティ（''hcifconfig''や''hcid''など）が必要になります。これらはBlueZパッケージで手に入ります（http://www.bluez.org）。
+
+== IEEE80211 ==
+
+ハードウェアに依存しないIEEE 802.11ネットワークスタックを有効にします。
+
+== MTD ==
+
+MTD (Memory Technology Device).
+
+MTDとはフラッシュメモリやRAMなどの機器のことで、組込みシステムでSSDとして動作する類のものです。このオプションはMTDのための汎用サポートを提供します。個別のMTDデバイスのドライバも選択できるようになります。
+
+== PARPORT ==
+
+パラレルポート。
+
+マシンのパラレルポート（25個の穴が並んでいるコネクタ）をプリンタやZIPドライブなどで使用したいならyesを選びます。
+
+詳しくは''Documentation/parport.txt''および''drivers/parport/BUGS-parport''を参照して下さい。パラレルポートに接続できるデバイスについて詳しくは http://www.torque.net/linux-pp.html を参照して下さい。
+
+一つのパラレルポートを複数のデバイスで使うことも可能ですし、ドライバを全てカーネルに組み込んでしまっても大丈夫です。パラレルポートが複数あって、特定のドライバがロード時にどのポートとIRQを使うべきか指定したい場合は、''Documentation/parport.txt''を参照して下さい。
+
+== PNP ==
+
+Plug and Play.
+
+PnPは周辺機器をソフトウェアで設定（IRQの割り当てなど）するための標準仕様です。ジャンパースイッチなどを使わず、BIOS、OS、あるいはユーザスペースのユーティリティで設定ができます。
+
+yesにしておくとPnPが利用できます。また、必要なプロトコル全てをyesにしておきましょう。あるいは、ここはnoにしておき、PnPデバイスは''isapnptools''などのツールを使って設定するという手もあります。
+
+== ISAPNP ==
+
+ISA Plug and Play.
+
+ISA PnPサポートが必要な場合はyesを選びます。詳しくは''Documentation/isapnp.txt''を参照して下さい。
+
+ISA Plug and Playデバイスをお持ちならhttp://www.roestock.demon.co.uk/isapnptoolsで入手できるツールを使って設定することをお勧めします。
+
+== PNPBIOS ==
+
+実験的Plug and Play BIOSサポート。
+
+Linuxではメインボードのリソース（パラレルポートのリソースなど）を自動検出するために「Plug and Play BIOS Specification Version 1.0A May 5, 1994」に則ったPNPBIOSを使用します。これを有効にしたければyesを選択します。またPNPBIOSはメインボードのデバイスとその他のデバイスとで衝突が起こるのを防ぐこともできます。
+
+PNPBIOSはいずれACPIに取って代わられる予定ですが、共存も可能です。あなたのシステムが非ISAでACPI対応ならば、PNPBIOSは不要と思われます。
+
+== IDE ==
+
+ATA/ATAPI/MFM/RLLサポート。
+
+yesを選ぶと、カーネルはATA/(E)IDEやATAPIなどの低価格大容量ストレージを扱えるようになります。最も一般的なのはIDE
+ハードディスクとATAPI CD-ROMドライブです。
+
+システムが全てSCSIで構成されているならnoを選んでもかまいません。
+
+* Integrated Disk Electronics (IDE、別名ATA-1）は大容量ストレージの接続のための標準です。1984年にWestern DigitalとCompaqによって策定され、当時はST506という名前でした。
+* AT Attachment (ATA)はIDEのスーパーセットに当たるものです。
+* Fast-IDEは別名ATA-2あるいはFast ATAとも呼ばれます。
+* Enchanced IDE (EIDE)は別名ATA-3です。LBAでいうところの8.4GB以上の大容量ディスクに対応し、4つのディスクやCDROM、テープなどに対応します。
+* UDMA/33は別名UltraDMA/33、あるいはATA-4と呼ばれます。高速DMAコントローラを使うことによって高速転送を可能にし、CPU負荷も低減されます。
+* ATA Packet Interface (ATAPI) はEIDEのテープ及びCD-ROMドライブで利用されるプロトコルで、SCSIとよく似ています。
+
+SMART IDE (Self-monitoring, -analysis, and -reporting technology) はデータの破損やディスクのクラッシュを防ぐ技術で、ハードウェアの障害の前兆（熱、アクセス時間など）を検出する仕組みです。1995年6月以降のディスクドライブはこの標準に則っているでしょう。カーネル自体はこれには関与しませんが、''smart''などのユーザスペースツールを使えばSMARTの状況を調べられます。
+
+詳しくは''Documentation/ide.txt''を参照して下さい。
+
+== BLK_DEV_IDE ==
+
+拡張IDE/MFM/RLLディスク/CD-ROM/テープ/フロッピーサポート。
+
+yesにしておくと、完全なIDEドライバが利用できるようになり、最大で10のATA/IDEデバイスを使える上、それぞれがマスターとスレーブを持てるので、最大20台のディスクやCD-ROMドライブを利用できるようになります。
+
+詳しくは''Documentation/ide.txt''を参照して下さい。また、ハードディスクについては http://www.tldp.org/docs.html#howto にてDisk-HOWTOおよびMulti- Disk-HOWTOを参照して下さい。
+
+ATA/IDEドライブとインタフェースのパラメータを微調整するには''hdparm''パッケージを使って下さい（ ftp://ibiblio.org/pub/ Linux/system/hardware ）。
+
+rootファイルシステムがIDEにある場合はこのドライバはモジュールではなく組み込みとしてビルドする必要があります。
+
+IDEドライブがない、あるいはメモリの条件が非常に厳しい場合はnoを選ぶといいでしょう。古いハードディスクドライバを選ぶと13KBほど節約できます。それ以外の場合はyesを選びます。
+
+== BLK_DEV_IDEDISK ==
+
+IDE/ATA-2ディスクサポート。
+
+MFM/RLL/IDEの拡張サポートを有効にします。これらのディスクがあり、古いドライバを使う理由が特に無ければyesを選択します。システムがSCSIのみで構成されているならnoで構いません。
+
+rootファイルシステムがIDEディスクにある場合はモジュールではなく組み込みとしてビルドする必要があります。
+
+== BLK_DEV_IDECD ==
+
+IDE/ATAPI CD-ROMサポート。
+
+ATAPI接続のCD-ROMドライブを使用するならyesを選択します。ATAPIはSCSIとよく似たプロトコルで、IDE CD-ROMで利用されます。最近のCD-ROMドライブはほとんどがATAPI接続になっています。
+
+yesにしておくと、ブート時にCD-ROMドライブが検出され、hdbやhdcとして認識されます（''dmesg''コマンドでカーネルのブートメッセージを確認してみましょう）。CD-ROMドライブがこれ一台なら、他のCD-ROMオプションは全てnoにして構いませんが、ISO 9660 CD-ROMファイルシステムのオプションは有効にしておく必要があります。
+
+古いバージョンのLILOはIDE/ATAPI CD-ROMをうまく扱えませんので、http://lilo.go.dyndns.org よりLILO16以降のバージョンを入手して下さい。
+
+== BLK_DEV_IDEFLOPPY ==
+
+ATAPI接続のIDEフロッピードライブを使用するならyesを選びます。
+
+LS-120およびIomega ZIPドライブもこのドライバでサポートされます。ジャンパー設定などに関してはhttp://www.win.tue.nl/~aeb/linux/zip/zip-1.html を参照して下さい。ATAPI PD-CD/CDRドライブはこのドライバではサポートされません。SCSIエミュレーションサポートが必要です。
+
+yesにしておくとフロッピーはブート時に検出され、hdbやhdcとして認識されます（''dmesg''コマンドでカーネルのブートメッセージを確認してみましょう）。
+
+== SCSI ==
+
+SCSIデバイス。
+
+SCSIハードディスク、CD-ROMなどのSCSIデバイスを使用するならyesを選択します。また、SCSIホストアダプタ（SCSIコントローラとも言う）の名前を確認しておきましょう。
+
+また、その他のSCSIプロトコルを使うデバイスがあるときもyesを選びます。例えばIomega ZIPドライブのパラレルポート盤、USBストレージデバイス、Fibre ChannelやFireWireストレージ、IDE-SCSIエミュレーションドライバなどです。
+
+rootファイルシステムがSCSIデバイスにある場合は、モジュールではなく組み込みとしてビルドする必要があります。
+
+== BLK_DEV_SD ==
+
+SCSIディスク。
+
+SCSIハードディスク、FibreChannelディスク、USBストレージあるいはSCSI・パラレル版のIomega ZIPドライブを使用するならyesを選びます。また、http://www.tldp.org/docs.html#howtoのSCSI-HOWTOおよびDisk-HOWTOを参照して下さい。
+
+このオプションはSCSI CD-ROMとは関係ありません。
+
+rootファイルシステムがSCSIデバイスにある場合は、モジュールではなく組み込みとしてビルドする必要があります。
+
+== CHR_DEV_ST ==
+
+SCSIテープサポート。
+
+SCSIテープドライブを使用するならyesを選びます。また、http://www.tldp.org/docs.html#howto のSCSI-HOWTOおよび ''Documentation/scsi/st.txt''を参照して下さい。
+
+このオプションはSCSI CD-ROMとは関係ありません。
+
+== BLK_DEV_SR ==
+
+SCSI CD-ROMサポート。
+
+SCSIあるいはFireWireのCD-ROmドライブを使用するならyesを選びます。また、 http://www.tldp.org/docs.html#howto のSCSI-HOWTOとCDROM-HOWTOを参照して下さい。また、ISO 9660 CD-ROM ファイルシステムサポートも有効にする必要があります。
+
+== CHR_DEV_SG ==
+
+汎用SCSIサポート。
+
+SCSI接続のスキャナやシンセサイザなど、ハードディスク・CD-ROM・テープ以外のデバイスを利用したければ、yesを選択します。カーネル自体はこれらのデバイスを扱えませんので、追加のソフトウェアが必要になるでしょう。
+
+スキャナーに関してはSANE http://www.sane-project.org を、CDライターに関しては Cdrtools http://cdrecord.berlios.de/old/private/cdrecord.html、Disk at Onceに関しては CDRDAO http://cdrdao.sourceforge.net、高音質オーディオCDリーダーのCdparanoiaに関しては http://www.xiph.org/paranoia を参照して下さい。それ以外のデバイスについては自分でドライバソフトウェアを書かないといけないかも知れません。詳しくは''Documentation/scsi/scsi-generic.txt''を参照して下さい。
+
+== CHR_DEV_SCH ==
+
+SCSIメディアチェンジャー。
+
+SCSIメディアチェンジャーのドライバーです。よくあるのはテープライブラリとMOD/CD-ROMジュークボックスです。これは本当のフルなジュークボックス用のオプションで、6枚チェンジャーのような小規模のものには必要ありません。これらは"Type: Medium CHanger"として''/proc/scsi/scsi''にリストアップされています。詳細は''Documentation/scsi/scsi-changer.txt''を参照して下さい。
+
+== SCSI_MULTI_LUN ==
+
+CDジュークボックスのように複数のLUN（Lugical Unit Number）を持つSCSIデバイスを使っているにもかかわらず単一のLUNしか認識されていない場合は、ここでyesを選択することでSCSIドライバに複数のLUNを検出させることができます。複数のLUNを持つデバイスはあたかも複数のSCSIデバイスのように見えます。大半のSCSIデバイスはLUNをひとつしか持ちませんので、普通はnoで大丈夫です。起動/モジュールパラメータの''max_luns''でこの設定をオーバーライドできます。
+
+== SCSI_ATA ==
+
+Seraial ATA (SATA)サポート。
+
+SATAのホストコントローラとデバイスを扱うためのドライバファミリーです。
+
+== MD ==
+
+RAID/LVM。
+
+一つの論理デバイスを通じて複数の物理スピンドルを扱うためのオプションで、RAID・LVMを利用する際に必要です。
+
+== BLK_DEV_MD ==
+
+デバイスマッパ。
+
+デバイスマッパは低レベルなボリュームマネージャです。論理セクタのレンジにマッピングすることができます。色々なマッピングのタイプが選べる上、自分でカスタムのマッピングを含んだモジュールを欠くこともできます。
+
+LVM2などの高レベルボリュームマネージャもこれを利用します。
+
+== IEEE1394 ==
+
+FireWire。
+
+IEEE1394は高パフォーマンスなシリアルバスで、別名FireWireあるいはi.Linkとも呼ばれます。主にデジタルビデオカメラなどのデバイスを接続するのに利用されます。
+
+FireWireハードウェアを使いたい場合はyesを選択します。これはコアサポートのみですので、個別のドライバもインストールする必要があります。
+
+== I2O ==
+
+I2O (Intelligent Input/Output) アーキテクチャを使うとハードウェアドライバを2つに分割できます。OS独自の部分(OSM)とハードウェア独自の部分(HDM)の2つです。OSDは様々なHDMと会話でき、理想としてはHDMはOSに依存しない構成になっています。これによって同じHDMドライバを、関連したOSMさえ存在すれば、複数のOSで利用できることになります。この機能を使うにはI2Oインターフェースアダプターカードがマシンに接続されている必要があります。このカードには特殊なI/Oプロセッサ(IOP)が搭載されており、CPUの代わりにI/Oを受け持つので高速に処理が可能です。
+
+yesにしておくとインターフェースアダプタのドライバとOSMの選択肢が提示されますので、適切なものを選んで下さい。
+
+== NETDEVICES ==
+
+ネットワークデバイス。
+
+他のマシンと接続する事がないのであればnoを選んでも構いません。ネットワークカードを使うならyesを選びます。SLIPやPPPでどこかへ接続する場合もyesを選びます。PLIPによるパラレル接続で他のマシンとやり取りする場合や、AX.25/KISSを利用する場合もyesを選びます。
+
+Tony Bauttsらによる Linux Network Administor's Guide http://www.tldp.org/guides.html も参考にして下さい。
+
+== NET_ETHERNET ==
+
+10M/100Mのイーサネット。
+
+イーサネット(IEEE 802.3あるいはISO8802-2)はもっとも一般的なLANの種類で、大学や企業等でもよく使われています。
+
+よくあるイーサネットの種類は10-base2/Thinnet（同軸ケーブルでチェーン状につなぐ10Mbps接続）、10-BaseT/ツイストペア（ツイストペアケーブルでハブへつなぐ10Mbps接続）、10-BaseF（光ファイバーを使った10Mbps接続）、100-baseTX（二本のツイストペアケーブルを使った100Mbps接続）、100-baseT4（ツイストペアケーブルを四本使った100Mbps接続）、100-baseFX（光ファイバーを使った100Mbps接続）、そしてギガビットイーサネット（光ファイバーかコッパーケーブルを使った1Gbps接続）です。100-base系はFast Ethernetとも呼ばれます。
+
+マシンをイーサネットに接続する予定で、イーサネットのNICを搭載しているなら、yesを選択します。Ethernet-HOWTO http://www.tldp.org/docs.html#howto も参考にして下さい。また、NICごとのドライバも有効にする必要があります。
+
+このオプション自体は他の選択肢を提供するだけで、実質的な効果はありません。
+
+== NET_RADIO ==
+
+無線LAN。
+
+無線LANに関連するオプションですが、アマチュア無線やFMラジオとは関係ありません。
+
+yesを選ぶとWireless Extensionsが有効になり、''/proc/net/wireless''が作成され、''iwconfig''にアクセスできるようになります。Wireless Extensionsは無線LANに関する設定項目や統計情報などをドライバがユーザスペースに提供できるようにするための汎用APIです。Wireless Extensionsに含まれるツールセットだけで全ての種類の無線LANを扱うことができます（ドライバがWireless Extensionsに対応している限り）。もう一つの利点として、OSやドライバを再起動せずにパラメータを変更できる点が挙げられます。
+
+Wireless ExtensionsをPCMCIAで利用したければここでyesを選びます。ツールは http://www.hpl.hp.com/personal/Jean_Tour-rilhes/Linux/Tools.html から入手できます。
+
+
+== PPP ==
+
+PPPはインターネットのトラフィックを電話線（かシリアル）上で送受信するプロトコルです。利用中のプロバイダがPPPに対応しているか確認しておきましょう。同じ目的で少し古いものにSLIPがありますが、最近のプロバイダならPPPに対応していると思います。
+
+PPPを利用するには''pppd''というプログラムが別途必要です。これについてはPPP-HOWTO http://www.tldp.org/docs.html#howto にて開設されています。''Documentation/Changes''には推奨の''pppd''バージョンが記載されていますので、確認しておきましょう。PPPオプションを有効にするとカーネルのサイズが約16KB増大します。
+
+PPPには実は二種類あり、ひとつは従来の非同期型PPPで、アナログの電話回線を利用します。もうひとつは同期型PPPで、ディジタルなISDNなどの回線を利用します。適切なオプションを選択しましょう。
+
+== PPPOE ==
+
+PPPoEサポートです。このドライバを使うには cvs.samba.org から入手できる最新版の''pppd''が必要です。あるいは、''RoaringPenguin''パッケージ http://www.roaringpenguin.com/pppoe を参照して下さい。
+
+== ISDN ==
+
+ISDN (Integrated Services Digital Networks)は完全にディジタルな電話回線サービスです。多くはSLIPやPPPを用いてインターネットに接続するのに利用されます。通常の電話回線より速度が早く、インターネットを利用中でも通話ができるのが利点です。マシンにISDNカードが搭載されており、プロバイダが対応している場合のみ利用できます。詳しくは  http://www.alumni.caltech.edu/~dank/isdn を参照して下さい。
+
+ISDNを利用したければyesを選びます。
+
+== PHONE ==
+
+Telephony。
+
+Telephonyを使って普通の電話をVoIPに利用したければyesを選びます。
+
+{{LKN/Tip| このオプションはモデムとは関係ありません。}}
+
+== INPUT ==
+
+何らかの入力機器（マウス、キーボード、ペンタブ、ジョイスティックなど）を利用したければyesを選択します。
+
+ヘッドレスな（モニターやキーボードなどが一切ない）マシンを構築する場合はnoで構いません。
+
+詳しくは ''Documentation/input/input.txt''を参照して下さい。
+
+== VT ==
+
+仮想ターミナル。
+
+ディスプレイとキーボードを使ったターミナルを利用したければyesを選びます。仮想というのは、ひとつの物理端末で複数の仮想ターミナルを走らせられるということです。
+
+キーボードとモニタを活用するには少なくともひとつの仮想ターミナルが必要です。したがって、組込みシステム等の場合はnoにしておけばメモリを節約できます。こういったシステムにログインする方法はシリアルかネットワーク接続経由だけになります。
+
+仮想ターミナルは、たとえばひとつのターミナルではシステムの警告メッセージなどを表示しておき、もうひとつではCUIのユーザセッションを走らせ、3つ目でXセッションを動かすなどの使い方ができるので便利です。仮想ターミナルの切り替えは通常、Alt-functionキーなどの組み合わせで行います。
+
+よく分からない場合はyesにしておくのが無難です。
+
+== VT_CONSOLE ==
+
+コンソールは、カーネルのメッセージや警告を受け取り、シングルユーザモードにてログインを受け付けるデバイスです。yesにしておくと仮想ターミナルをコンソールとして利用できます。これはもっとも一般的な利用形態ですので、シリアルだけを使うのでなければyesを選んでおきます。
+
+yesにすると、現在見えている仮想ターミナル(''/dev/tty0'')がデフォルトでシステムコンソールとして利用できます。（これを変更するオプションについては{{Link|LKN/Chapter9}}を参照して下さい。
+
+== SERIAL_8250 ==
+
+標準シリアルポートを有効にするかどうかです。通常はyesを選びます。サーバ専用機にする場合や、シリアルマウスなどでシリアルポートを利用する予定がないときはnoでも構いません。また、CycladesやStallionといったマルチシリアルポートのドライバを使う時もこれは必要ありません。
+
+{{LKN/Tip| 非標準のシリアルポートを使う場合、このドライバをモジュールとしてビルドしてはいけません。アンロード時に設定が失われるからです。この制約は将来、なくなってくれるかもしれません。}}
+
+殆どの場合はyesで大丈夫です。
+
+== AGP ==
+
+AGP (Accelerated Graphics Port)は主にグラフィックカードを接続するのに使われるバスです。
+
+ここでyesを選択するとAGPカードを使えます。いわばマザーボードのチップセット用のAGPドライバとなります。
+
+AGP GARTで提供されるテクスチャメモリ（理論上は256MBまでですが、実際には64か128MB）より多くのテクスチャメモリが必要なら、PCIを使えば数GBまで提供されます。
+
+XとGLXがMTRRサポートでwrite-combiningするにはこの方法しかありません。このオプションを無効にするとOpenGLのレンダリングはかなり遅くなりますが、それでもPIOよりは早いです。
+
+GLXかDRIを使用するならyesを選びます。
+
+== DRM ==
+
+DRI (Direct Rendering Infrastructure) のカーネルレベルでのサポートはXFree86 4.0で登場しました。yesを選ぶと、あなたのグラフィックカードに適したモジュールをリストから選ぶ必要があります。これらのモジュールは同期、セキュリティおよびDMA転送の機能を提供します。詳しくは http://dri.sourceforge.net を参照して下さい。また、AGPも有効にすべきです。
+
+== I2C ==
+
+I2C (I-square-C) はPhilipsによって開発された低速シリアルバスプロトコルで、マイクロコントローラアプリケーションでよく使われます。SMBusはI2Cのサブセットです。詳しくは''Documentation/i2c''、特に''summary''ファイルを参照して下さい。
+
+このオプションでI2CとSMBusの両方に対応できます。ハードウェアセンサーやVideo For Linuxを使うのに必要です。
+
+I2Cに対応させたければ、ここでyesを選んだ上でバスアダプタ固有のドライバを有効にする必要があります。
+
+== SPI ==
+
+SPI (Serial Peripheral Interface)は低レベルな同期的プロトコルです。SPI対応のチップは最大で数十Mbpsの速度でデータを転送できます。チップはコントローラとチップセレクトで特定されます。SPIスレーブの多くは動的に検出できないばかりか、読み込み専用であったり書きこみ専用であったりします。
+
+SPIはマイクロコントローラとセンサー、EEPROMやフラッシュメモリ、コーデックなどのチップ、AD/DAコンバータなどのやり取りによく使われます。MMCやSDカードにも使われ、MMCソケットを利用するDataFlashカードにはSPIが必要です。
+
+SPIはMicrowire、SSP、SSIおよびPSPと同じ4線インターフェース（select, clock, data in, data out）を利用するファミリーに属します。したがってこれらのデバイスにも使えるでしょう。
+
 
 
 
