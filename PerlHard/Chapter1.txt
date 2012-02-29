@@ -1,4 +1,4 @@
-<!-- vim: set shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+<!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第1章: 配列とスカラー}}
 {{Nav
 |next=PerlHard/Chapter3
