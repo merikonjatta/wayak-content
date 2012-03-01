@@ -1,4 +1,4 @@
-<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+<!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第4章: オブジェクト}}
 {{Nav
 |prev=PerlHard/Chapter3
@@ -6,6 +6,8 @@
 }}
 
 = 第4章: オブジェクト =
+
+
 
 
 <references/>

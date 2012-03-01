@@ -1,4 +1,4 @@
-<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+<!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第3章: ハッシュ}}
 {{Nav
 |prev=PerlHard/Chapter2
@@ -9,7 +9,354 @@
 
 == スタック演算子 ==
 
+スタックの簡単な実装として、配列に対してpushとpop演算子を使うことができる。pushは配列の最後に要素を追加し、popは最後の要素を削除して返す。
+    my @list = (1, 2);
+    push @list, 3;
+この時点で@listの内容は<code>1 2 3</code>である。
+    my $elt = pop @list;
+これで$eltは3で、@listは<code>1 2</code>になった。
 
+リストをスタックとして使うとき、pushとpopという名前は適切だ。例えば次の例のように、スタックを使って配列の要素の順番を逆転させることができる。
+    sub rev {
+        my @stack;
+        foreach (@_) { push @stack, $_; }
+        my @list;
+        while (my $elt = pop @stack) {
+            push @list, $elt;
+        }
+        return @list;
+    }
+最初のループではローカルなスタックにパラメータの内容をpopして追加していく。次のループではスタックから要素をpopしていき、@listに加えていく。最終的に@listを返す。
+
+=== 練習3.1 ===
+
+Perlにはreverseという演算子があり、これはほぼ同じ事をするのだが、新しい配列を作る代わりに与えられた配列を破壊的に変更する。さきほどのrevを、同じ動作をするよう書き換えよう。
+
+この練習の目的はスタック演算子の動作を確認することなのであまり現実に即してはいない。実際にreverseを再実装するハメになったら、スタックを使わずその場で要素を入れ替えていくだろう。
+    sub rev3 {
+        for (my $i = 0; $i < @_/2; $i++) {
+            swap ($_[$i], $_[-$i-1]);
+        }
+        return @_;
+    }
+ここに登場するforループはCのforループと同じである。なお、負のインデックスを使うと配列の後ろから数えてくれる。なのでi=0のとき<code>-$i-1</code>は-1になり、最後の要素を指す。
+
+
+== 3.2 キュー演算子 ==
+
+既にshift演算子は紹介した。リストの最初の要素を削除して返すのがshiftである。pushとpopでスタックを実装できるように、pushとshiftでキューを実装できる。
+
+なおunshiftというのもあって、これは配列の最初に要素を追加する。これらは一連のトークンをパースするのによく使われる。
+
+== ハッシュ ==
+
+ハッシュは配列と同じようにスカラーの集合であるが、違うのは、配列は順序付きであり数値インデックスでアクセスするのに対し、ハッシュは順序がなく、キーと呼ばれるスカラー値でアクセスする点である。
+
+スカラーの頭には$、配列の頭には@がついたが、ハッシュの頭には%がつく。配列の要素にはカギカッコ[]でアクセスしたが、ハッシュの要素にはヒゲカッコ{}でアクセスする。
+    my %hash;
+    $hash{do} = "a deer, a female deer";
+    $hash{re} = "a drop of golden sun";
+    $hash{mi} = "what it’s all about";
+最初の行では%hashというローカル変数を宣言し、次の三行ではdo, re, meという3つのキーにそれぞれ値を代入している。これらのキーは文字列なのでダブルクオートで囲ってもよいが、ハッシュキーのコンテキストでは自動的に文字列として扱われる。
+
+ハッシュはキーから値を連想するという意味で連想配列と呼ばれることもある。
+
+keys演算子を使うとハッシュに存在するキーのリストが取得できる。ここでは<code>keys %hash</code>が<code>mi do re</code>を返す。キーは順不同であることに注意しよう。これはハッシュ自体の実装に依存するので、別のperl処理系で同じプログラムを動かすと別の順番で出力されるかも知れない。
+
+次のループはハッシュの全キー・値ペアを出力する。
+    foreach my $key (keys %hash) {
+        print "$key => $hash{$key}\n";
+    }
+結果はこのようになる。
+    mi => what it’s all about
+    do => a deer, a female deer
+    re => a drop of golden sun
+太い矢印記号を使ったが、実はこの記号はハッシュにキー・値ペアを割り当てるときに使える。
+    %hash = (
+        do => "a deer, a female deer",
+        re => "a drop of golden sun",
+        mi => "what it’s all about",
+    );
+
+ハッシュはまた、each演算子でもイテレートできる。eachは呼ばれるたびに次のキー・値ペアをリストとして返す。どのペアを既に扱ったかは内部的に記録されている。
+    while ((my $key, my $value) = each %hash) {
+        print "$key => $value\n";
+    }
+最後に、values演算子を使えば値のリストが取得できる。
+    my @values = values %hash;
+もちろん、こうして得た値から、対応するキーを逆引きすることはできない。同じ値が複数のキーに存在することもあるだろう。
+
+== 3.4 頻度表 ==
+
+ハッシュは例えば、ある文書の中に単語が何回現れたかを数える場合などに使える。この用例をデモするために、まず{{Link|PerlHard/Chapter2}}に出てきた<code>grep.pl</code>をコピーするところから始めよう。これはファイルを開き、それぞれの行に操作を行うものだった。軽く変更した結果が次のコードだ。
+    sub read_file {
+        my $file = shift;
+        open (FILE, $file) || croak "Couldn’t open $file";
+        while (my $line = <FILE>) {
+            read_line $line;
+        }
+    }
+read_fileはそれぞれの行を読み込み、read_lineサブルーチンを呼び出してその行を処理する。read_lineではsplit演算子で行を単語に分割してループする。
+    sub read_line {
+        our %hash;
+        my @list = split " ", shift;
+        foreach my $word (@list) {
+            $hash{$word}++;
+        }
+    }
+splitの最初の引数は正規表現で、どういうパターンで文字列を分割するかをしていする。この場合はただのスペースだ。
+
+read_lineの最初の行ではhashという変数を定義しているが、ourを使っているのでグローバル変数となり、他のサブルーチンからもアクセス可能だ。
+
+重要なのは<code>$hash{$word}++</code>の部分だ。これでハッシュの、その単語をキーとした値にアクセスしてインクリメントしている。単語が初めて現れた場合はPerlは魔法のように新たなキー・値ペアを作って値を0に初期化してくれる。
+
+結果をプリントするために、このグローバルなハッシュを利用する別のサブルーチンを書こう。
+    sub print_hash {
+        our %hash;
+        my @list = keys %hash;
+        print "@list\n";
+    }
+
+=== 練習3.2 ===
+
+* この章に登場したサブルーチンを使って、テキストファイルを読み、その中でそれぞれの単語が何回登場するかを数えるプログラムを書こう。ヒント：<code>lc</code>演算子を使えば単語を小文字に変換できる。また、splitの最初の引数に文字のリストを与えるとそれらがみな分割に使われる。適当な文書を入手したければ http://gutenberg.net/ に行こう。
+* このプログラムを変更し、登場したユニークな単語の数を出力しよう。
+* このプログラムを変更し、最も頻繁に使われた単語とその回数を出力しよう。
+
+
+== 3.5 sort ==
+
+sort演算子はリストの要素をソートする。比較には普通、文字列比較演算子が使われる。たとえば次のprint_hashはハッシュのキーをアルファベット順に出力する。
+    sub print_hash {
+        my @list = sort keys our %hash;
+        print "@list\n";
+    }
+何か別の基準でソートしたければ、独自のサブルーチンを使えばいい。2つの値を取り、第一引数のほうが大きければ1、小さければ-1、等しければ0を返すようなサブルーチンを作るのだ。この際、何が「大き」くて何が「小さ」くて何が「等しい」のかの定義は自由だ。
+
+たとえば数値の大小でソートしたければこういうサブルーチンを作ればいい。
+    sub numerically { $a <=> $b }
+$aと$bは比較されるべき要素だ。sortを呼び出すときにこうやって使う。
+    my @list = sort numerically values our %hash;
+これでハッシュの内容が昇順にソートされる。しかし残念ながら、これでは最もよく使われた単語を見つけることはできない。なぜならキーを逆引きできないからだ。
+
+そこで、次のようにキーを取って、対応する値で比較するサブルーチンをつくろう。
+    sub byvalue {
+        our %hash;
+        $hash{$b} <=> $hash{$a};
+    }
+そしてこのようにキーを値でソートする。
+    my @list = sort byvalue keys our %hash;
+
+
+=== 練習3.3 ===
+
+前節のプログラムを改変し、最も頻繁に現れる20の単語とその頻度を出力しよう。
+
+ちなみにF. Scott FitzgeraldのThe Great Gatsbyに最も頻繁に現れた単語は"the"の2403回で、次点は"and"の1573回だった。平凡でない単語の中で最も頻度が高かったのは"Gatsby"の197回（32位）だった。
+
+
+== 3.6 集合に含まれるかをチェック ==
+
+ハッシュはよく、ある要素が集合に属すかどうかを調べるのに使われる。たとえば<code>/usr/share/dict/words</code>の単語を全部読み込み、それらをキーとするハッシュを作ってみる。
+
+次のサブルーチンは辞書から行を読み込み、そのエントリをハッシュに作成する。
+    sub dict_line {
+        our %dict;
+        my $word = lc shift;
+        chomp $word;
+        $dict{$word}++;
+    }
+最初の行は<code>%dict</code>という変数を宣言する。次の行は引数をひとつ取って小文字に変換する。三行目は<code>chomp</code>を使って行末から改行文字を削除する。最後にハッシュのエントリを作成する。
+
+これで任意の単語が辞書にあるかどうかをチェックできる。これには式が値を持つかどうかを返す<code>defined</code>演算子が使える。
+    if (!defined $dict{$word}) { print "*" }
+if文の処理内容が短い時はこのように一行にまとめてしまうことがよくある。この場合セミコロンは不要だ。また、次のような書き方もよくされる。
+    print "*" if !defined $dict{$word};
+
+The Great Gatsbyをこのサブルーチンで解析してみると、実に妙な単語が出てくることに気づく。"coupe"とか"yacht"とか、"pasquinade"とか、"echolalia"とかだ。
+
+
+== 3.7 サブルーチンを参照する ==
+
+ここで、我々は2つのファイル（辞書と文書）を走査し、それぞれに違った処理を行なっている。もちろん、ファイルを開いて捜査するコードをコピー＆ペーストしてもいいのだが、できれば<code>read_file</code>を抽象化して、第二引数に処理内容を与えるようにしたい。これはサブルーチンへの参照を与えることで可能だ。
+    sub read_file {
+        my $file = shift;
+        my $subref = shift || \&read_line;
+        open (FILE, $file) || croak "Couldn’t open $file";
+        while (my $line = <FILE>) {
+            $subref->($line);
+        }
+    }
+
+二行目で、shiftを使って第二引数を取得する。結果が見定義（つまり第二引数が与えられなかった）なら、デフォルトとして<code>\&amp;read_line</code>を使う。これはサブルーチンへの参照だ。サブルーチン自体の名前は<code>&amp;read_line</code>がサブルーチンの名前で、バックスラッシュをつけると参照になる。
+
+<code>$subref</code>はスカラーであることに気づいてほしい。つまり参照はスカラーだということだ。
+
+ループの中では参照からサブルーチンを呼び出す書式が登場する。矢印演算子(-&gt;)だ。これは参照を逆参照(dereference)する、すなわち参照の指し示す値を取得する方法の一つだ。
+
+さて、これで準備ができた。<code>read_file</code>を第二引数つきで呼び出して辞書を読み込もう。
+    read_file "/usr/share/dict/words", \&dict_line;
+繰り返すが、<code>\&amp;dict_line</code>は<code>&amp;dict_line</code>という名のサブルーチンへの参照だ。
+
+=== 練習3.4 ===
+
+http://gutenberg.org/ から適当な本を入手し、あなたの辞書にないどのような単語が登場するか調べよう。
+
+
+== 3.8 引数としてのハッシュ ==
+
+ハッシュを引数として渡すと、キーと値が交互に入ったリストに変換される。例えば次のサブルーチン
+    sub print_hash {
+        print "@_\n";
+    }
+は、このような結果を出力するので困る。
+    mi what it’s all about do a deer, a female deer re a drop of golden sun
+一つの手としては、リストからハッシュを再構成するというのがある。
+    sub print_hash {
+        my %hash = @_;
+        while ((my $key, my $value) = each %hash) {
+            print "$key => $value\n";
+        }
+    }
+大抵のアプリケーションならこれで大丈夫かも知れないが、ハッシュが大きくなるとパフォーマンスに悪影響が出るだろう。こういうときはハッシュを参照として渡すといい。先ほどと同じように、バックスラッシュをつければ参照を扱える。
+    print_hash \%hash;
+受ける側の<code>print_hash</code>では、参照を<code>$hashref</code>という名のスカラーにまず割り当てる。その上で%演算子を使って逆参照(dereference)するのだ。
+    sub print_hash {
+        my $hashref = shift;
+        while ((my $key, my $value) = each %$hashref) {
+            print "$key => $value\n";
+        }
+    }
+参照は字面としては好ましくないかもしれないが、実に多様な場面で役立ってくれるのだ。
+
+
+== 3.9 マルコフジェネレータ ==
+
+ここまでで紹介してきた機能のショーケースとして、ある文書を読み、単語の頻度を解析し、単語が同じ頻度で登場する文書を生成するプログラムを作成する。ナンセンスでありつつも面白い結果が出るプログラムである。
+
+実際にThe Great Gatsbyをソースとすると、次のようなテキストが生成された。
+<blockquote>”Why CANDLES?” objected Daisy, frowning. She snapped them
+out to the garage, Wilson was so sick that he was in he answered,
+”That’s my affair,” before he went there. A pause. ”I don’t like
+mysteries,” I answered. ”And I think of you.” This included me.
+Mr. Sloane and the real snow, our snow, began to melt away until
+gradually I became aware now of a burglar blowing a safe.</blockquote>
+
+また、本書の最初の三章をソースにすると次のようなテキストが生成された。
+<blockquote>One way to refer to a variable appears in double quotes, so it would
+be easy to miss the error. Again, there is an array of strings that
+contains only those characters, from start to finish, like “acceded”.
+What set of characters, so matches anything that does not start
+with sub followed by “love” and “tender, love”, although there are
+no spaces between the words now?</blockquote>
+
+なんとなく読める文章になっているのが素敵だ。たぶん本書と同じくらい意味不明だろう。
+
+さて実装だが、まず、原文を走査して単語3つの組み合わせを拾っていく。そして、任意の2単語の直後にどのような単語がどのような頻度で現れるかを数えるのだ。
+
+エルヴィス・プレスリーの不朽の歌詞を例に取ると、
+    love me tender, love me true.
+2単語の組み合わせ"love me"は二回現れていて、その後には"tender"か"true"が来ている。また、"me tender,"という2単語の直後には"love"、"tender, love"という2単語の直後には"me"が来ている。
+これを今述べたように解析すると、次のようなハッシュが作れる。
+    me tender, => love
+    love me => tender, true.
+    tender, love => me
+ファイルを走査しながら3単語のキューを維持するのだ。次の単語を拾ったらキューに入れ、古いものをひとつ捨てる。先ほどの<code>read_file</code>に<code>triple_line</code>というサブルーチンの三章を渡すことで実現する。
+    sub triple_line {
+        my @list = split " ", shift;
+        foreach my $word (@list) {
+            triple_word $word;
+        }
+    }
+この中では<code>triple_word</code>というサブルーチンが呼ばれる。<code>triple_word</code>では、直近の2単語セットを<code>prefix</code>というグローバル変数に格納する。
+    sub triple_word {
+        our @prefix;
+        my $word = shift;
+        if (@prefix == 2) {
+            print "@prefix => $word\n";
+            shift @prefix;
+        }
+        push @prefix, $word;
+    }
+<code>prefix</code>の長さが2なら、後ろの単語を出力して、頭から一つ要素を削る。そうでなければ、末尾に単語を追加する。出力はこうなる。
+    love me => tender,
+    me tender, => love
+    tender, love => me
+    love me => true.
+
+さて次に、prefixを後続単語に結びつけるハッシュを作成する。やり方はいくつかあるが、もっともシンプルなのは単語リストを文字列として登録する方法だ。すると値がスカラーなのでなんの問題もない。だがリストが長くなってくると単語を配列にしておいたほうがパフォーマンスが向上するだろう。配列はハッシュの値にはできないので、配列への三章をハッシュに入れることにする。
+
+これが変更を加えた<code>triple_word</code>だ。
+    sub triple_word {
+        our (@prefix, %hash);
+        my $word = shift;
+        if (@prefix == 2) {
+            my $key = join " ", @prefix;
+            my $aref = $hash{$key};
+            push @$aref, $word;
+            $hash{$key} = $aref;
+            shift @prefix;
+        }
+        push @prefix, $word;
+    }
+if文の中のjoinという演算子は@prefixの内容をキーとして使える文字列につないでいる。
+
+その次の三行が山場だ。まずキーでハッシュを引いて配列への参照を得る。それに@をつけて逆参照し、pushで新しい単語を追加する。その次の行は新しいエントリである場合に必要だ。
+
+ついでに、ourとmyは変数を一度にいくつも宣言できることを頭に入れておこう。
+
+
+=== 練習3.5 ===
+
+このプログラムは配列への参照を扱う例として紹介したが、実際にはそれぞれの配列があまり大きくないのであれば文字列を使ったほうが楽だろう。<code>triple_word</code>を、ハッシュには文字列が入るように書き換えよう。ヒント：<code>.=</code>演算子を使うといい。
+
+== 3.10 ランダムなテキスト ==
+
+これで原文を解析できたので、このデータを元に同じ頻度で単語が現れるテキストをランダムに生成しよう。
+
+最初のステップは、ハッシュのキーからランダムなprefixを選択することだ。<code>rand</code>演算子を使えば0から引数までのランダムな浮動小数点を得られる（引数自体は含まない）。つまり<code>rand @list</code>とするとそのリストのインデックスからランダムなエントリがひとつ選ばれる（なぜならリストはスカラーコンテキストで評価されると長さになるからだ）。
+
+次の<code>rand_elt</code>というサブルーチンは引数のリストの中から適当な要素を返す。
+
+これでハッシュからランダムなキーを拾うのは簡単だ。
+    my $prefix = rand_elt keys %hash;
+このキーでハッシュを引き、単語の一覧をスペースで分割してリストにし、ランダムな要素を選ぶ。
+    my $words = $hash{$prefix};
+    my $word = rand_elt split " ", $words;
+こうして選んだ単語をprefixに追加し、最初の要素をshiftすることで新たな単語を得る。
+    my @triple = split " ", $prefix;
+    shift @triple;
+    $prefix = "@triple $word";
+
+
+=== 練習3.6 ===
+
+ハッシュからランダムな要素を得て、その後続単語の一覧からランダムな要素を選ぶことでランダムテキストを生成する<code>random_text</code>というサブルーチンを書こう。好きな文書を解析してそれを元にランダムテキストを生成しよう。
+
+
+== 3.11 練習 ==
+
+=== 練習3.7 ===
+
+この実装は、2単語から後続単語を結びつけるハッシュの値側が長くなればなるほど処理が重くなる。解決策としては、値を文字列ではなくハッシュにし、単語をキーとし、その頻度を値にすればよい。この実装だと空間的に（それぞれの単語が一度ずつしか保存されないので）節約できるし、時間的にも（ハッシュに要素を追加するコストはハッシュの要素数に依存しないので）節約できる。ただし、ランダムなテキストを生成するのにやや手間がかかってしあう。
+
+* さきほどの実装を変更し、文字列のかわりにハッシュを使おう。
+* また、ランダムテキスト生成の際にもそのハッシュを利用するよう変更しよう。
+
+=== 練習3.8 ===
+
+あるハッシュに、任意の値が一度しか登録されていないとき、そのハッシュは可逆(invertible)であるという。すなわち、キーと値を逆転させることができる。
+
+ハッシュを引数として取り、キーと値を逆転させるサブルーチンを書こう。
+
+練習なのでハッシュを捜査するコードを書けばよいが、参考までに、次のように短く書くこともできる。
+    sub invert_hash {
+        my %hash = reverse @_;
+        return %hash;
+    }
+ハッシュは引数にするとキーと値が交互に入った配列になると言ったが、これの順番を反転させると値とキーが交互になる（最初に値が来る）。これをハッシュな変数に代入すると、値だったものをキーとし、キーだったものを値としたハッシュができあがる。
+
+ちなみにこのreturn文はオプショナルだ。書かなかった場合はサブルーチン内で最後に評価された値が返される。
 
 
 <references/>
