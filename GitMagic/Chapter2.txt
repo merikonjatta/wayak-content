@@ -1,14 +1,14 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第2章: 基本の技}}
 {{Nav
-|prev=PerlHard/Chapter1
-|next=PerlHard/Chapter3
+|prev=GitMagic/Chapter1
+|next=GitMagic/Chapter3
 }}
 
 
 <references/>
 
 {{Nav
-|prev=PerlHard/Chapter1
-|next=PerlHard/Chapter3
+|prev=GitMagic/Chapter1
+|next=GitMagic/Chapter3
 }}

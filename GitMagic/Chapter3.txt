@@ -1,14 +1,14 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第3章: 色んなクローン}}
 {{Nav
-|prev=PerlHard/Chapter2
-|next=PerlHard/Chapter4
+|prev=GitMagic/Chapter2
+|next=GitMagic/Chapter4
 }}
 
 
 <references/>
 
 {{Nav
-|prev=PerlHard/Chapter2
-|next=PerlHard/Chapter4
+|prev=GitMagic/Chapter2
+|next=GitMagic/Chapter4
 }}

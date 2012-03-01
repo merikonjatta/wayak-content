@@ -1,14 +1,14 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第7章: グランドマスター}}
 {{Nav
-|prev=PerlHard/Chapter6
-|next=PerlHard/Chapter8
+|prev=GitMagic/Chapter6
+|next=GitMagic/Chapter8
 }}
 
 
 <references/>
 
 {{Nav
-|prev=PerlHard/Chapter6
-|next=PerlHard/Chapter8
+|prev=GitMagic/Chapter6
+|next=GitMagic/Chapter8
 }}

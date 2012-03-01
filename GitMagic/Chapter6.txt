@@ -1,14 +1,14 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第6章: マルチプレイヤー}}
 {{Nav
-|prev=PerlHard/Chapter5
-|next=PerlHard/Chapter7
+|prev=GitMagic/Chapter5
+|next=GitMagic/Chapter7
 }}
 
 
 <references/>
 
 {{Nav
-|prev=PerlHard/Chapter5
-|next=PerlHard/Chapter7
+|prev=GitMagic/Chapter5
+|next=GitMagic/Chapter7
 }}

@@ -1,12 +1,12 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第1章: はじめに}}
 {{Nav
-|next=PerlHard/Chapter3
+|next=GitMagic/Chapter2
 }}
 
 
 <references/>
 
 {{Nav
-|next=PerlHard/Chapter3
+|next=GitMagic/Chapter2
 }}

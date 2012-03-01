@@ -1,14 +1,14 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第5章: 歴史の授業}}
 {{Nav
-|prev=PerlHard/Chapter4
-|next=PerlHard/Chapter6
+|prev=GitMagic/Chapter4
+|next=GitMagic/Chapter6
 }}
 
 
 <references/>
 
 {{Nav
-|prev=PerlHard/Chapter4
-|next=PerlHard/Chapter6
+|prev=GitMagic/Chapter4
+|next=GitMagic/Chapter6
 }}

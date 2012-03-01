@@ -1,14 +1,14 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
 {{#set: title=第4章: ブランチの魔術}}
 {{Nav
-|prev=PerlHard/Chapter3
-|next=PerlHard/Chapter5
+|prev=GitMagic/Chapter3
+|next=GitMagic/Chapter5
 }}
 
 
 <references/>
 
 {{Nav
-|prev=PerlHard/Chapter3
-|next=PerlHard/Chapter5
+|prev=GitMagic/Chapter3
+|next=GitMagic/Chapter5
 }}
