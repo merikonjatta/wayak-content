@@ -6,29 +6,29 @@
 
 {|class="default"
 |-
-|’˜Ò
+|è‘—è€…
 |Ben Lynn
 |-
-|o”ÅĞ
+|å‡ºç‰ˆç¤¾
 |CreateSpace
 |-
-|o”Å”N
+|å‡ºç‰ˆå¹´
 |2010
 |-
-|WebƒTƒCƒg
+|Webã‚µã‚¤ãƒˆ
 |http://www-cs-students.stanford.edu/~blynn/gitmagic/
 |-
-|ƒ‰ƒCƒZƒ“ƒX
+|ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
 |[http://www.gnu.org/licenses/gpl-3.0.html GPLv3]
 |}
 
-==ƒ‰ƒCƒZƒ“ƒX==
+==ãƒ©ã‚¤ã‚»ãƒ³ã‚¹==
 
-–|–ó•¶‚ÍŒ´•¶‚ªƒRƒs[ƒŒƒtƒg‚Ì‚½‚ß
+ç¿»è¨³æ–‡ã¯åŸæ–‡ãŒã‚³ãƒ”ãƒ¼ãƒ¬ãƒ•ãƒˆã®ãŸã‚
 [http://www.gnu.org/licenses/gpl-3.0.html GPLv3]
-‚ÅŒöŠJ‚µ‚Ä‚¢‚Ü‚·B
+ã§å…¬é–‹ã—ã¦ã„ã¾ã™ã€‚
 
-==–ÚŸ==
+==ç›®æ¬¡==
 * {{ Link | GitMagic/Chapter1 }}
 * {{ Link | GitMagic/Chapter2 }}
 * {{ Link | GitMagic/Chapter3 }}
