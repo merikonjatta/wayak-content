@@ -1,0 +1,12 @@
+<!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
+{{#set: title=付録: ダメなところ}}
+{{Nav
+|prev=PerlHard/Chapter8
+}}
+
+
+<references/>
+
+{{Nav
+|prev=PerlHard/Chapter8
+}}

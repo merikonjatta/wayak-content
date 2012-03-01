@@ -1,0 +1,41 @@
+<!-- vim: set noexpandtab shiftwidth=4 wrap linebreak filetype=mediawiki: -->
+= Git Magic =
+
+[[File:git_magic.jpg|thumb]]
+{{#set: title=Git Magic}}
+
+{|class="default"
+|-
+|著者
+|Ben Lynn
+|-
+|出版社
+|CreateSpace
+|-
+|出版年
+|2010
+|-
+|Webサイト
+|http://www-cs-students.stanford.edu/~blynn/gitmagic/
+|-
+|ライセンス
+|[http://www.gnu.org/licenses/gpl-3.0.html GPLv3]
+|}
+
+==ライセンス==
+
+翻訳文は原文がコピーレフトのため
+[http://www.gnu.org/licenses/gpl-3.0.html GPLv3]
+で公開しています。
+
+==目次==
+* {{ Link | GitMagic/Chapter1 }}
+* {{ Link | GitMagic/Chapter2 }}
+* {{ Link | GitMagic/Chapter3 }}
+* {{ Link | GitMagic/Chapter4 }}
+* {{ Link | GitMagic/Chapter5 }}
+* {{ Link | GitMagic/Chapter6 }}
+* {{ Link | GitMagic/Chapter7 }}
+* {{ Link | GitMagic/Chapter8 }}
+* {{ Link | GitMagic/AppendixA }}
+

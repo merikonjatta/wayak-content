@@ -17,3 +17,9 @@ Wayakは2011年度[http://rohm.drm.doshisha.ac.jp/ 同志社ローム記念館�
 |[[PerlHard|Learning Perl the Hard Way]]
 |{{#show: PerlHard | ?summary#}}
 |}
+
+{|-
+|[[File:Git_magic.jpg|thumb|left|link=GitMagic]]
+|[[GitMagic|Git Magic]]
+|{{#show: GitMagic | ?summary#}}
+|}
