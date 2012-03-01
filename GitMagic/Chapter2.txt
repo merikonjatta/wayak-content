@@ -1,10 +1,152 @@
-<!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
+<!-- vim: set shiftwidth=4 tabstop=4 wrap filetype=mediawiki: -->
 {{#set: title=第2章: 基本の技}}
 {{Nav
 |prev=GitMagic/Chapter1
 |next=GitMagic/Chapter3
 }}
 
+= 題2章: 基本の技 =
+
+gitコマンドの海に飛び込む前に、これらの基本的な例で肌を慣らそう。どれもシンプルだが便利だ。実際、私はgitを使い始めて最初の一ヶ月間はほとんどこれらのコマンドしか使わなかった。
+
+== セーブする ==
+
+今から何か激しい変更をするという時、現在のディレクトリのスナップショットを撮っておこう。
+    $ git init
+    $ git add .
+    $ git commit -m "My first backup"
+編集した結果がわやくちゃになったら、こうして元に戻せる。
+    $ git rest --hard
+上手く行ったのでもう一度セーブするには
+    $ git commit -a -m "Another backup"
+
+
+== 追加、削除、リネーム ==
+
+上の最後のコマンドでは、最初にgit addした時に既にあったファイルしか記録されない。新しいファイルやディレクトリを作ったら、gitにそう伝えよう。
+    $ git add readme.txt Documentation
+同じく、ファイルをgitに忘れて欲しければ
+    $ git rm kludge.h obsolete.c
+    $ git rm -r incriminating/evidence/
+もしまだファイルを削除していなければ削除してくれる。
+
+ファイルのリネームは古いファイルを削除して新しいのをつかするのと同じだ。あるいは、'''mv'''コマンドと同じ感覚で使える'''git mv'''というコマンドもある。
+    $ git mv bug.c feature.c
+
+
+== 少し複雑なUndoとRedo ==
+
+ある時点まで戻って全てをやり直したいと思うことがあるかも知れない。そういうときは
+    $ git log
+を使おう。最近のコミットの履歴と、それらのSHA1ハッシュが表示される。
+    commit 766f9881690d240ba334153047649b8b8f11c664
+    Author: Bob <bob@example.com>
+    Date:   Tue Mar 14 01:59:26 2000 -0800
+
+        Replace printf() with write().
+
+    commit 82f5ea346a2e651544956a8653c0f58dc151275c
+    Author: Alice <alice@example.com>
+    Date:   Thu Jan 1 00:00:00 1970 +0000
+
+        Initial commit.
+このSHA1ハッシュを使えばコミットを特定できる。全部入力する必要はなくて、最初の数文字でいい。もちろんハッシュ全体をコピー＆ペーストしてもいい。
+    $ git reset --hard 766f
+これで指定したコミットの状態に完全に戻せる。それ以降のコミットは全て無かったことになる。
+
+また、一時的に前の状態に戻りときもあるだろう。その時は
+    $ git checkout 82f5
+で以前の状態に戻れるし、それ以降のコミットも全部記録されたままだ。ただし、タイムトラベルの映画と同じように、ここで変更を加えてコミットするとパラレルワールドに言ってしまう。
+
+このパラレルワールドのことを'''ブランチ'''（枝）と呼ぶ。ブランチについては{{Link|GitMagic/Chapter4.txt}}で詳しく述べるが、今は
+    $ git checkout master
+で元の世界（現在）に戻れると覚えておこう。あと、checkoutをする前に加えた変更をコミットかリセットしておこう。
+
+再びゲームにたとえると
+
+* '''git reset --hard''': 昔のセーブゲームをロードし、それ以降のセーブゲームを全部削除する。
+* '''git checkout''': 昔のセーブゲームをロードするが、そのまま遊ぶと本来の流れからズレる。ここでセーブすると別のブランチに入る。
+
+ファイル名やディレクトリ名を指定し、その部分だけ昔に戻す事もできる。
+    $ git checkout 82f5 some.file another.file
+このコマンドはファイルを勝手に上書きしてしまうこともあるので気をつけよう。事故を防ぐため、特にgit初心者のうちはcheckoutするまえに必ず変更をコミットするようにしておこう。とにかく、自信がないときは''git commit -a''しておけばよい。
+
+ハッシュをコピペするのが面倒なら
+    $ git checkout :/"My first b"
+のようにメッセージの冒頭を書いてもいい。また、例えば5つ前の状態を
+    $ git checkout master~5
+のようにも書ける。
+
+
+== リバート==
+
+特定のコミットだけもとに戻すこともできる。
+    $ git commit -a
+    $ git revert 1b6d
+これで1b6dだけがUndoされる。結果は新しいコミットとして記録される（'''git log'''で確認しよう。）
+
+
+== Changelogを作る ==
+
+[http://en.wikipedia.org/wiki/Changelog changelog]を作りたいときは、
+    $ git log > ChangeLog
+
+
+== ダウンロード ==
+
+Gitで管理されているプロジェクトのコピーをダウンロードするには
+    $ git clone git://server/path/to/files
+
+例えば、この本を構成するファイルを全部入手するには
+    $ git clone git://git.or.cz/gitmagic.git
+
+'''clone'''コマンドについては後に詳しく説明する。
+
+
+== 最先端 ==
+
+既に何らかのプロジェクトを'''git clone'''してきている場合、このコマンドで最新版に更新できる。
+    $ git pull
+
+
+== 即座に公開 ==
+
+書いたスクリプトを誰かと共有したいとしよう。単にあなたのPCからダウンロードしてもらってもいいだろうが、それだとあなたが編集中だとか実験的な変更をしているときにダウンロードされると困ったことになる。もちろん、そのためにリリースサイクルというのが存在するのだ。公開できると思った時に始めて公開する。
+
+これをGitでやるには、まずスクリプトが置いてある場所で
+    $ git init
+    $ git add .
+    $ git commit -m "First release"
+そして相手には
+    $ git clone your.computer:/path/to/script
+を実行してもらう。これは相手があなたのマシンにSSHで接続できる時である。そうでなければ、'''git daemon'''を起動しよう。相手には代わりに
+    $ git clone git://your.computer/path/to/script
+を実行してもらう。
+
+以降、変更して公開できる状態になったときは
+    $ git commit -a -m "Next release"
+とすれば、相手はcloneしたディレクトリで
+    $ git pull
+することで最新版を入手できる。コミットとコミットの間の中途半端な状態は相手の目に触れずに済む。
+
+
+== 履歴 ==
+
+前回のコミット以来どんな変更をしたか見るには
+    $ git diff
+
+あるいは昨日以来：
+    $ git diff "@{yesterday}"
+
+あるバージョンから、現在の2バージョン前まで：
+    $ git diff 1b6d "master~2"
+
+どの書き方をしても、出力されるのはパッチだ。これらは'''git apply'''で適用することができる。
+
+また、これも試してみよう。
+    $ git whatchanged --since="2 weeks ago"
+
+私はよく履歴をqgitで見ることがある。
 
 <references/>
 
