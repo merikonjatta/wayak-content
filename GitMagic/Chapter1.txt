@@ -1,5 +1,5 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
-{{#set: title=第1章: はじめに}}
+{{#set: title=第1章 はじめに}}
 {{Nav
 |next=GitMagic/Chapter2
 }}

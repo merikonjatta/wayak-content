@@ -1,9 +1,11 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
-{{#set: title=第3章: 色んなクローン}}
+{{#set: title=第3章 色んなクローン}}
 {{Nav
 |prev=GitMagic/Chapter2
 |next=GitMagic/Chapter4
 }}
+
+= 第3章 色んなクローン =
 
 以前のバージョン管理システムでは、ファイルを取得する主な方法はcheckoutだった。ある段階におけるファイルを入手するのだ。
 

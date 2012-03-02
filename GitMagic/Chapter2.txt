@@ -1,11 +1,11 @@
 <!-- vim: set shiftwidth=4 tabstop=4 wrap filetype=mediawiki: -->
-{{#set: title=第2章: 基本の技}}
+{{#set: title=第2章 基本の技}}
 {{Nav
 |prev=GitMagic/Chapter1
 |next=GitMagic/Chapter3
 }}
 
-= 題2章: 基本の技 =
+= 題2章 基本の技 =
 
 gitコマンドの海に飛び込む前に、これらの基本的な例で肌を慣らそう。どれもシンプルだが便利だ。実際、私はgitを使い始めて最初の一ヶ月間はほとんどこれらのコマンドしか使わなかった。
 

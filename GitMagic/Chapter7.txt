@@ -1,5 +1,5 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
-{{#set: title=第7章: グランドマスター}}
+{{#set: title=第7章 グランドマスター}}
 {{Nav
 |prev=GitMagic/Chapter6
 |next=GitMagic/Chapter8

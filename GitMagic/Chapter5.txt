@@ -1,5 +1,5 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
-{{#set: title=第5章: 歴史の授業}}
+{{#set: title=第5章 歴史の授業}}
 {{Nav
 |prev=GitMagic/Chapter4
 |next=GitMagic/Chapter6

@@ -1,5 +1,5 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
-{{#set: title=第8章: 大暴露}}
+{{#set: title=第8章 大暴露}}
 {{Nav
 |prev=GitMagic/Chapter7
 |next=GitMagic/AppendixA

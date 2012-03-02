@@ -1,5 +1,5 @@
 <!-- vim: set shiftwidth=4 wrap filetype=mediawiki: -->
-{{#set: title=第6章: マルチプレイヤー}}
+{{#set: title=第6章 マルチプレイヤー}}
 {{Nav
 |prev=GitMagic/Chapter5
 |next=GitMagic/Chapter7
