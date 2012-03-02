@@ -5,6 +5,141 @@
 |next=GitMagic/Chapter7
 }}
 
+= 第6章 マルチプレイヤー =
+
+gitを使い始めた当初はプライベートなプロジェクトを自分だけで開発してた。gitの分散関連の様々なコマンドのうち、使っていたのは大半がpullとcloneだった。
+
+その後コードを公開して他人からの変更を受け入れたくなり、複数の開発者を受け入れるようプロジェクトを管理するやり方を学んだ。幸い、これはgitの強みであり、むしろ存在理由とも言える。
+
+== 私は誰？ ==
+
+コミットには必ず作者の名前とメールアドレスが付与される。これはgit logなどで表示される。デフォルトではシステム設定を使うが、明示的に指定するには
+    $ git config --global user.name "John Doe"
+    $ git config --global user.email johndoe@example.com
+今いるレポジトリだけでこの設定を使いたければ --global オプションを省こう。
+
+== SSH, HTTP越しのgit ==
+
+WebサーバにSSHアクセスできるがgitがインストールされていないときは、HTTP越しにやりとりができる（ネイティブプロトコルよりはパフォーマンスが悪い）。
+
+gitをダウンロード、コンパイルしてインストールし、Webディレクトリにレポジトリを作ろう。
+    $ GIT_DIR=proj.git git init
+    $ cd proj.git
+    $ git --bare update-server-info
+    $ cp hooks/post-update.sample hooks/post-update
+古いバージョンのgitではコマンドが失敗するので
+    $ chmod a+x hooks/post-update
+としておこう。
+
+これでSSH経由のpushができる。
+    $ git push web.server:/path/to/proj.git master
+また、誰でもあなたのプロジェクトにアクセスできる。
+    $ git clone web.server http://web.server/proj.git
+
+== 何でも越しのgit ==
+
+サーバやネットワークさえ使わずにレポジトリを共有する方法としてすでにgit fast-exportとgit fast-importを紹介した。これを使えばどんな媒体でもgitレポジトリをやりとりできるが、もっと効率的なツール'''git bundle'''というのもある。
+
+まず送る側はbundleを作成する。
+    $ git bundle create somefile HEAD
+somefileというbundleができるのでこれをメールなりUSBメモリなりプリンタとスキャナなりのろしなりで受け手に送信する。
+
+受け取った方はこのbundleからコミットを引き出す。
+    $ git pull somefile
+これは空のレポジトリで行えばよい。ファイルサイズからは信じられないかも知れないが、レポジトリ全体が入っている。
+
+より大きいプロジェクトでは、受ける側にないコミットだけを詰め込むことができる。たとえば1b6d以降がないなら
+    $ git bundle create somefile HEAD ^1b6d
+
+頻繁にやっているとどこまでが共有できているかを忘れやすいので、タグを使うのがおすすめだ。bundleを作ったらすぐに
+    $ git tag -f lastbundle HEAD
+でタグを作っておき、次回は
+    $ git bundle create newbundle HEAD ^lastbundle
+でそれ以降のbundleを作る。
+
+
+== パッチ ==
+
+パッチはファイルへの変更点を人間にも機会にも読めるようにしたものだ。これは大変便利なので非常に広く使われている。相手のバージョン管理システムに関わらず、パッチさえ送りつければ変更点が適用できる。
+
+{{Link|GitMagic/Chapter1}}に登場したが、
+    $ git diff 1b6d > my.patch
+とするとパッチが出力される。これをメールなどで送信すればいい。
+
+パッチを受け取ったら
+    $ git apply < my.patch
+で適用できる。
+
+より公式な場では作者の名前と署名などが必要になるかも知れない。まずある時点以降のパッチを生成する。
+    $ git format-patch 1b6d
+生成されたファイルは'''git-send-email'''で送信してもいいし、自分で送信してもいい。また、コミットの範囲も指定できる。
+    $ git format-patch 1b6d..HEAD^^
+受け取り側ではこのメールをファイルに保存し、
+    $ git am < email.txt
+これでメールの送信者名とアドレスを使ってコミットを作ってくれる。
+
+Web型のメールクライアントだと生のメールファイルを表示するために何か特別な操作が必要かもしれない。メールの形式はクライアントによって多少違うが、mboxベースのものならなんとかなるだろう。なんとかするでしょう？
+
+
+== 移動 ==
+
+レポジトリをcloneしたあとは、pushやpullをすると自動的に元のURLを対象に行なってくれる。実はこのための情報がconfigとして保存されている。ちょっと覗いてみよう。
+    $ git config --list
+remote.origin.urlというオプションがあるだろう。これが元のURLだ。originというのはそのアドレスに与えられたニックネームで、前述のmasterと同様、名前を変えたり削除したりしてもいいが、特にそうする理由はないと思う。
+
+元のレポジトリが移動したら、このURLを変更しよう。
+    $ git config remote.origin.url git://new.url/proj.git
+
+branch.master.merge オプションは、git pullしたときに対象となるデフォルトのリモートブランチを指定する。最初にcloneしたときはソースレポジトリの「現在のブランチ」に設定されるため、ソースレポジトリのHEADがあちらこちらと動いてもpullすると元のブランチがマージされる。
+
+これは最初にcloneしたレポジトリにしか当てはまらない（branch.master.remoteオプションに記録されている）。他のレポジトリからpullするときはブランチを明示する必要がある。
+    $ git pull git://example.com/other.git master
+
+本章で紹介したpushやpullに引数がなかったのはこういう理由による。
+
+== リモートブランチ ==
+
+レポジトリをcloneするとブランチも全部cloneされる。これは聞かないと表示されないので気づかなかったかも知れない。
+
+リモートブランチの一覧を見るには
+    $ git branch -r
+すると次のような出力が出るだろう。
+    origin/HEAD
+    origin/master
+    origin/experimental
+ここにはリモートの各ブランチとHEADが現れていて、これらはgitのコマンドに引数として与えられる。たとえば一連のコミットの後、最後にfetchした版と比較したいとしよう。ログを見てSHA1ハッシュを探してもいいが、もっと簡単に
+    $ git diff origin/HEAD
+でもいい。
+
+== 複数のリモート ==
+
+プロジェクトに自分の他に二人の開発者が携わっていて、両方チェックしておきたいときは、両方ともリモートとして登録しておけばよい。
+    $ git remote add other git://example.com/some_repo.git
+    $ git pull other some_branch
+これで2つ目のレポジトリからブランチをマージできて、あらゆるブランチをチェックできる。
+    $ git diff origin/experimental^ other/some_branch~5
+
+もし自分のワーキングディレクトリに影響を与えずに変更だけ確認したいなら、pullではなくfetchを使う。
+    $ git fetch        # origin（デフォルト）からfetch
+    $ git fetch other  # 二人目からfetch
+
+これで履歴だけを取得する。ワーキングディレクトリは何も変化がないが、それらのブランチをgitコマンドで参照できる。
+
+pullとは単に「fetchしてからmerge」だということを思い出して欲しい。普通はfetchした直後にmergeしたいのでpullを使うわけだ。
+
+リモートを削除したり特定のブランチを無視したりといったその他の使い方については'''git help remote'''を見て欲しい。
+
+
+== 私のやり方 ==
+
+私のプロジェクトでは、私がpullできるレポジトリを貢献者に用意してもらうというやり方を取ることが多い。gitホスティングサービスはワンクリックでforkできるようになっているものもある。
+
+貢献者のツリーをfetchしたら、gitコマンドをいくつか叩いて変更内容をチェックし、満足な内容だったらマージした上で少し修正したりする。最後にメインレポジトリにpushすることにしている。
+
+よく貢献を受けるが、このやり方はうまくスケールすると思う。[http://torvalds-family.blogspot.com/2009/06/happiness-is-warm-scm.html Linus Torvalds氏によるブログ記事]も見てみてほしい。
+
+パッチファイルの世界よりはgitの世界にいたほうが何かと便利である。パッチをgitのコミットに返還しなくていいし、メールアドレスや名前、時刻、メッセージといった情報を記録していてくれるからだ。
+
 
 <references/>
 
